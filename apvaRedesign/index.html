@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<html>
+
+<body>
+    <div class="j-form-container">
+        <form>
+            <div class="j-form-element">
+                <label for="state" class="j-label">State of Contract Issue: <sup>*</sup></label>
+                <select id="state" class="j-input">
+                        <option value="AL">Alabama</option>
+                        <option value="AK">Alaska</option>
+                        <option value="AZ">Arizona</option>
+                        <option value="AR">Arkansas</option>
+                        <option value="CA">California</option>
+                        <option value="CO">Colorado</option>
+                        <option value="CT">Connecticut</option>
+                        <option value="DE">Delaware</option>
+                        <option value="FL">Florida</option>
+                        <option value="GA">Georgia</option>
+                        <option value="HI">Hawaii</option>
+                        <option value="ID">Idaho</option>
+                        <option value="IL">Illinois</option>
+                        <option value="IN">Indiana</option>
+                        <option value="IA">Iowa</option>
+                        <option value="KS">Kansas</option>
+                        <option value="KY">Kentucky</option>
+                        <option value="LA">Louisiana</option>
+                        <option value="ME">Maine</option>
+                        <option value="MD">Maryland</option>
+                        <option value="MA">Massachusetts</option>
+                        <option value="MI">Michigan</option>
+                        <option value="MN">Minnesota</option>
+                        <option value="MS">Mississippi</option>
+                        <option value="MO">Missouri</option>
+                        <option value="MT">Montana</option>
+                        <option value="NE">Nebraska</option>
+                        <option value="NV">Nevada</option>
+                        <option value="NH">New Hampshire</option>
+                        <option value="NJ">New Jersey</option>
+                        <option value="NM">New Mexico</option>
+                        <option value="NC">North Carolina</option>
+                        <option value="ND">North Dakota</option>
+                        <option value="OH">Ohio</option>
+                        <option value="OK">Oklahoma</option>
+                        <option value="OR">Oregon</option>
+                        <option value="PA">Pennsylvania</option>
+                        <option value="RI">Rhode Island</option>
+                        <option value="SC">South Carolina</option>
+                        <option value="SD">South Dakota</option>
+                        <option value="TN">Tennessee</option>
+                        <option value="TX">Texas</option>
+                        <option value="UT">Utah</option>
+                        <option value="VT">Vermont</option>
+                        <option value="VA">Virginia</option>
+                        <option value="WA">Washington</option>
+                        <option value="WV">West Virginia</option>
+                        <option value="WI">Wisconsin</option>
+                        <option value="WY">Wyoming</option>
+                </select>
+            </div>
+            <div class="j-form-element">
+                <label for="solveFor" class="j-label">Solve for: <sup>*</sup></label>
+                <select id="solveFor" class="j-input">
+                    <option value="initial">Initial Purchase Payment</option>
+                    <option value="annual">Annual Withdrawal Amount</option>
+                </select>
+            </div>
+            <div class="j-label">
+                <label for="incomeOrInitialPayment">Initial Purchase Payment</label>
+            </div>
+            <input id="incomeOrInitialPayment" class="jinput" type="number" placeholder="0">
+            <div class="j-label">
+                <label for="glwb">GLWB Rider</label>
+            </div>
+            <select id="glwb" class="jinput">
+                <option value="0">Income Boost</option>
+                <option value="2">Income Control</option>
+            </select>
+            <div class="j-label">
+                <label for="livesCovered">Lives Covered</label>
+            </div>
+            <select id="livesCovered" class="jinput">
+                <option value="0">Single Life</option>
+                <option value="1">Joint Life</option>
+            </select>
+            <div class="j-label">
+                <label for="currentAge">Current Age</label>
+            </div>
+            <input id="currentAge" class="jinput" type="number" placeholder="0">
+            <div class="j-label">
+                <label for="ageAtIncome">Age at Income Start Date</label>
+            </div>
+            <input id="ageAtIncome" class="jinput" type="number" placeholder="0">
+            <div id="submitBtn" class="j-submit-btn">Next</div>
+
+
+        </form>
+    </div>
+</body>
+
+</html>

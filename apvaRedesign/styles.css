@@ -1,0 +1,17 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.j-label {
+    width: 300px;
+}
+
+.j-label sup {
+    vertical-align: baseline;
+    color: red;
+}
+
+.j-form-element {
+    margin: 1rem;
+    display: flex;
+}
