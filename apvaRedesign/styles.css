@@ -1,17 +1,100 @@
+:root {
+	--accent-color: #34ccaa;
+	--accent-color-dark: #2db496;
+	--light-grey: #e6e9ed;
+}
+
 body {
-    font-family: Arial, Helvetica, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
+	margin: 0;
 }
 
-.j-label {
-    width: 300px;
+.j-form-bg {
+	background: var(--light-grey);
+	display: flex;
+	justify-content: center;
+	width: 100%;
 }
 
-.j-label sup {
-    vertical-align: baseline;
-    color: red;
+.j-form-container {
+	background: transparent;
+	padding: 20px;
 }
 
 .j-form-element {
-    margin: 1rem;
-    display: flex;
+	margin: 1rem;
+	display: flex;
+	font-weight: 700;
+	align-items: center;
+}
+
+.j-full-width-flex {
+	display: flex;
+	width: 100%;
+	justify-content: center;
+}
+
+.j-input {
+	min-width: 191px;
+	text-align: center;
+	margin: 0 1.5rem 0 1.5rem;
+	padding: 3px;
+}
+
+.j-input:focus::placeholder {
+	color: transparent;
+}
+
+.j-label {
+	min-width: 224px;
+	text-align: right;
+}
+
+.j-label sup {
+	vertical-align: baseline;
+	color: red;
+}
+
+.j-spouse-age {
+	display: none;
+}
+
+.j-submit-btn {
+	margin-top: 1rem;
+	font-weight: 700;
+	padding: 8px;
+	width: 70px;
+	text-align: center;
+	border-radius: 8px;
+	background: var(--accent-color);
+	color: white;
+	/* box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2); */
+	transition: ease 0.2s;
+}
+
+.j-submit-btn:hover {
+	cursor: pointer;
+	width: 80px;
+	background: var(--accent-color-dark);
+	transition: ease 0.3s;
+}
+
+/* REMOVE ARROWS ON NUMBER FIELDS */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+/* Firefox */
+input[type="number"] {
+	-moz-appearance: textfield;
+}
+
+/* ALIGN THE WIDTH OF INPUT AND SELECT BOXES */
+input,
+select {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
