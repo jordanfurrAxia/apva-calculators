@@ -1,12 +1,47 @@
+@font-face {
+	font-family: "Larsseit";
+	src: url("./assets/fonts/Larsseit-Bold.woff2") format("woff2"), url("../assets/fonts/Larsseit-Bold.woff") format("woff");
+	font-weight: 700;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Larsseit";
+	src: url("./assets/fonts/Larsseit-Light.woff2") format("woff2"), url("../assets/fonts/Larsseit-Light.woff") format("woff");
+	font-weight: 300;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Larsseit";
+	src: url("./assets/fonts/Larsseit.woff2") format("woff2"), url("../assets/fonts/Larsseit.woff") format("woff");
+	font-weight: 400;
+	font-style: normal;
+}
+
 :root {
-	--accent-color: #34ccaa;
-	--accent-color-dark: #2db496;
+	--dl-accent-color: #34ccaa;
+	--dl-accent-color-dark: #2db496;
+	--apva-accent-color: #00463b;
+	--apva-accent-color-light: #006657;
 	--light-grey: #e6e9ed;
 }
 
 body {
-	font-family: Arial, Helvetica, sans-serif;
+	/* font-family: Arial, Helvetica, sans-serif; */
+	font-family: "Larsseit", helvetica, arial, verdana, sans-serif;
+	font-size: 1rem;
 	margin: 0;
+}
+
+.j-bold-font {
+	font-weight: 700;
+}
+
+.j-flex-col {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
 }
 
 .j-form-bg {
@@ -24,7 +59,14 @@ body {
 .j-form-element {
 	margin: 1rem;
 	display: flex;
+	flex-direction: column;
 	font-weight: 700;
+	align-items: center;
+	justify-content: center;
+}
+
+.j-form-element-content {
+	display: flex;
 	align-items: center;
 }
 
@@ -35,10 +77,17 @@ body {
 }
 
 .j-input {
-	min-width: 191px;
+	width: 191px;
 	text-align: center;
-	margin: 0 1.5rem 0 1.5rem;
+	margin-left: 1rem;
 	padding: 3px;
+}
+
+.j-input-error {
+	color: red;
+	font-weight: 700;
+	font-size: 0.7rem;
+	width: 100%;
 }
 
 .j-input:focus::placeholder {
@@ -46,8 +95,8 @@ body {
 }
 
 .j-label {
-	min-width: 224px;
-	text-align: right;
+	min-width: 212px;
+	text-align: left;
 }
 
 .j-label sup {
@@ -60,13 +109,13 @@ body {
 }
 
 .j-submit-btn {
-	margin-top: 1rem;
+	margin: 1rem;
 	font-weight: 700;
 	padding: 8px;
 	width: 70px;
 	text-align: center;
 	border-radius: 8px;
-	background: var(--accent-color);
+	background: var(--apva-accent-color);
 	color: white;
 	/* box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2); */
 	transition: ease 0.2s;
@@ -75,8 +124,73 @@ body {
 .j-submit-btn:hover {
 	cursor: pointer;
 	width: 80px;
-	background: var(--accent-color-dark);
+	background: var(--apva-accent-color-light);
 	transition: ease 0.3s;
+}
+
+.j-summary-table-container {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	height: auto;
+}
+
+.j-summary-banner {
+	background: var(--apva-accent-color);
+	color: white;
+	font-size: 2rem;
+	font-weight: 700;
+	text-align: center;
+	padding: 1rem;
+}
+
+.j-third-flex {
+	display: flex;
+	width: auto;
+	flex-direction: column;
+	padding-left: 1rem;
+	padding-right: 1rem;
+	padding-bottom: 1.5rem;
+}
+
+.j-summary-table {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 2rem;
+}
+@media only screen and (max-width: 600px) {
+	.j-summary-table {
+		width: fit-content;
+		margin: auto;
+		justify-content: center;
+		flex-direction: column;
+	}
+	.j-third-flex {
+		width: 100%;
+		/* padding-left: 5rem; */
+	}
+}
+
+.j-summary-table p {
+	display: inline;
+}
+
+.j-summary-table-element:not(:last-child) {
+	margin-bottom: 1.5rem;
+}
+
+.j-summary-contents {
+	position: absolute;
+	width: 100%;
+	top: -300px;
+	z-index: -1;
+}
+
+.j-summary-slide-in {
+	position: absolute;
+	top: 0px;
+	transition: ease 0.5s;
 }
 
 /* REMOVE ARROWS ON NUMBER FIELDS */
