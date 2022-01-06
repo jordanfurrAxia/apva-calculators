@@ -16,6 +16,7 @@ let yearsDeferred = document.getElementById("yearsDeferred")
 let yearsDeferredError = document.getElementById("yearsDeferredError")
 let spouseAgeDiv = document.getElementById("spouseAgeDiv")
 let glwb = document.getElementById("glwb")
+let pdfDiv = document.getElementById("pdf")
 
 addEventListeners()
 
@@ -25,13 +26,32 @@ function handleNextBtn() {
 
 	for (let input of testResults) {
 		if (input[0] != "v") {
-			console.log("values INVALID")
 			giveWarning(testResults)
 			return
 		}
 	}
-	console.log("values VALID")
+
+	if (isAnnualWithdrawTooHigh()) {
+		giveWarning([["incomeOrInitialPayment", "'Annual Withdrawal Amount' too large."]])
+		return
+	}
+
 	runCalculation()
+}
+
+function isAnnualWithdrawTooHigh() {
+	// solveFor.value == "initial" in this function, always
+	// need: withdrawPercent
+	let annualIncome = parseInt(incomeOrInitialPayment.value)
+	let bonusRate = parseInt(glwb.value) == 0 ? 0.0625 : 0.0725
+	let ageAtIncome = getYoungestAge() + parseInt(yearsDeferred.value)
+	let withdrawPercent = withdrawMap.get(ageAtIncome)[parseInt(glwb.value) + parseInt(livesCovered.value)]
+	let withdrawBase = annualIncome / withdrawPercent
+	let initialPayment = withdrawBase / (bonusRate * Math.min(10, parseInt(yearsDeferred.value)) + 1)
+	if (initialPayment > 3000000) {
+		return true
+	}
+	return false
 }
 
 function runCalculation() {
@@ -45,34 +65,80 @@ function runCalculation() {
 		annualIncome = parseInt(incomeOrInitialPayment.value)
 	}
 
-	let ageAtIncome = parseInt(currentAge.value) + parseInt(yearsDeferred.value)
+	let ageAtIncome = getYoungestAge() + parseInt(yearsDeferred.value)
 	let withdrawPercent = withdrawMap.get(ageAtIncome)[parseInt(glwb.value) + parseInt(livesCovered.value)]
-	let interestPercent = parseInt(glwb.value) == 0 ? 0.06 : 0.07
+	let bonusRate = parseInt(glwb.value) == 0 ? 0.0625 : 0.0725
 
 	if (solveFor.value == "annual") {
-		populateBenefitTable(initialPayment, interestPercent, benefitTable)
+		populateBenefitTable(initialPayment, bonusRate, benefitTable)
 		withdrawBase = benefitTable[Math.min(parseInt(yearsDeferred.value), 40)][1]
 		annualIncome = withdrawPercent * withdrawBase
 	} else if (solveFor.value == "initial") {
 		withdrawBase = annualIncome / withdrawPercent
-		initialPayment = withdrawBase / (interestPercent * Math.min(10, parseInt(yearsDeferred.value)) + 1)
+		initialPayment = withdrawBase / (bonusRate * Math.min(10, parseInt(yearsDeferred.value)) + 1)
 
-		populateBenefitTable(initialPayment, interestPercent, benefitTable)
+		populateBenefitTable(initialPayment, bonusRate, benefitTable)
 	}
 
 	// let monthly = annualIncome / 12
 	// let percentOfInitial = annualIncome / initialPayment
 
-	let summaryTableHTML = createSummaryTableHTML(initialPayment, annualIncome, ageAtIncome)
+	let summaryTableHTML = createSummaryTableHTML(initialPayment, annualIncome, ageAtIncome, bonusRate, withdrawPercent)
+	let actualSummaryTableHTML = createActualSummaryTableHTML(benefitTable, initialPayment, annualIncome, ageAtIncome, bonusRate, withdrawPercent)
 
 	document.getElementById("summaryTable").innerHTML = summaryTableHTML
+	document.getElementById("actualSummaryTable").innerHTML = actualSummaryTableHTML
 	document.getElementById("summaryContents").classList.remove("j-summary-slide-in")
 	setTimeout(function () {
 		document.getElementById("summaryContents").classList.add("j-summary-slide-in")
 	}, 3)
+	document.getElementById("footer").classList.add("move-down-for-summary")
 }
 
-function createSummaryTableHTML(initialPayment, annualIncome, ageAtIncome) {
+function createActualSummaryTableHTML(benefitTable, ageAtIncome) {
+	let returnHTML = `<table style="border-collapse: collapse;">
+	<tr>
+	  <th>Year</th>
+	  <th>Age</th>
+	  <th>Withdrawal Benefit Base</th>
+	  <th>Annual Withdrawal Amount</th>
+	  <th>Lifetime Withdrawal Percentage</th>
+	</tr>
+	`
+
+	let counter = 0
+	let rowHighlighted = false
+	for (let row of benefitTable) {
+		if (counter < 11) {
+			let wPercent = "-"
+			let bBase = Math.round(row[1])
+			let currentAgeDisplayed = getYoungestAge() + counter
+
+			if (currentAgeDisplayed > 54) {
+				wPercent = withdrawMap.get(getYoungestAge() + counter)[parseInt(glwb.value) + parseInt(livesCovered.value)]
+			}
+			if (ageAtIncome == getYoungestAge() + counter || (!rowHighlighted && counter == 10)) {
+				returnHTML += "<tr style='background:#F4B860;'>"
+				rowHighlighted = true
+			} else {
+				returnHTML += "<tr>"
+			}
+			returnHTML += `
+				<td>${row[0]}</td>
+				<td>${currentAgeDisplayed}</td>
+				<td>${displayDollars(bBase)}</td>
+				<td>${wPercent == "-" ? "-" : displayDollars(bBase * wPercent)}</td>
+				<td>${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
+			</tr>
+			`
+		}
+		counter++
+	}
+
+	return returnHTML
+}
+
+function createSummaryTableHTML(initialPayment, annualIncome, ageAtIncome, bonusRate, withdrawPercent) {
 	let returnHTML = `
 	<div class="j-third-flex">
 		<div class="j-summary-table-element">
@@ -91,7 +157,7 @@ function createSummaryTableHTML(initialPayment, annualIncome, ageAtIncome) {
 	<div class="j-third-flex">
 		<div class="j-summary-table-element">
 			<p class="j-bold-font">Bonus Rate:  </p>
-			<p>6.00% HC</p>
+			<p>${displayPercent(bonusRate)}</p>
 		</div>
 		<div class="j-summary-table-element">
 			<p class="j-bold-font">Years Income is Deferred:  </p>
@@ -99,7 +165,7 @@ function createSummaryTableHTML(initialPayment, annualIncome, ageAtIncome) {
 		</div>
 		<div class="j-summary-table-element">
 			<p class="j-bold-font">Lifetime Withdrawal Percentage:  </p>
-			<p>4.35% HC</p>
+			<p>${displayPercent(withdrawPercent)}</p>
 		</div>	
 	</div>
 	<div class="j-third-flex">
@@ -128,15 +194,26 @@ function createSummaryTableHTML(initialPayment, annualIncome, ageAtIncome) {
 	return returnHTML
 }
 
-function populateBenefitTable(initialPayment, interestPercent, benefitTable) {
+function populateBenefitTable(initialPayment, bonusRate, benefitTable) {
 	let previousBenefit = initialPayment
 	benefitTable.push([0, initialPayment])
 
 	for (let i = 1; i < 41; i++) {
 		if (i < 11) {
-			previousBenefit = initialPayment * interestPercent + previousBenefit
+			previousBenefit = initialPayment * bonusRate + previousBenefit
 		}
 		benefitTable.push([i, previousBenefit])
+	}
+}
+
+function getYoungestAge() {
+	if (parseInt(livesCovered.value) == 0) {
+		// livesCoveredStr = "Single Life"
+		return parseInt(currentAge.value)
+	} else {
+		// livesCoveredStr = "Joint Life"
+
+		return Math.min(parseInt(spouseAge.value), parseInt(currentAge.value))
 	}
 }
 
@@ -188,8 +265,8 @@ function testIncomeOrInitialPaymentValues() {
 		}
 	} else {
 		// solveFor == 'initial' in this case
-		if (!incomeOrInitialPayment.value || parseInt(incomeOrInitialPayment.value) < 200 || parseInt(incomeOrInitialPayment.value) > 500000) {
-			returnArray = ["incomeOrInitialPayment", "'Annual Withdrawal Amount' must be between 200 and 500,000."]
+		if (!incomeOrInitialPayment.value || parseInt(incomeOrInitialPayment.value) < 200) {
+			returnArray = ["incomeOrInitialPayment", "'Annual Withdrawal Amount' must be at least 200."]
 		}
 	}
 
@@ -241,7 +318,7 @@ function testYearsDeferredValues() {
 		returnArray = ["yearsDeferred", "'Years Income is Deferred' must be between 0 and 50."]
 	} else {
 		// input range is valid
-		let incomeStartAge = parseInt(yearsDeferred.value) + parseInt(currentAge.value)
+		let incomeStartAge = parseInt(yearsDeferred.value) + getYoungestAge()
 		if (!incomeStartAge || incomeStartAge < 55 || incomeStartAge > 100) {
 			returnArray = ["yearsDeferred", "Attained age at income start must be between 55 and 100."]
 			console.log(incomeStartAge)
@@ -319,7 +396,7 @@ function displayDollars(x) {
 }
 
 function displayPercent(x) {
-	return (Math.round(x * 100 * 100) / 100).toString() + "%"
+	return (Math.round(x * 100 * 100) / 100).toFixed(2) + "%"
 }
 
 function addEventListeners() {
@@ -338,8 +415,42 @@ function addEventListeners() {
 	} else if (listener.attachEvent) {
 		livesCovered.attachEvent("onclick", handleLivesCovered)
 	}
+	if (clientReportBtn.addEventListener) {
+		clientReportBtn.addEventListener("click", handleClientReport)
+	} else if (listener.attachEvent) {
+		clientReportBtn.attachEvent("onclick", handleClientReport)
+	}
 }
 
-function testFunc() {
-	document.getElementById("summaryTable").classList.remove("j-summary-slide-in")
+function handleClientReport() {
+	// FULL WIDTH OF jsPDF using html2canvas IS 596px. DON'T ASK ME WHY
+	let tableTest = `
+	<table style="margin-left: 100px;">
+		<tr>
+			<td>A1</td>
+			<td>B1</td>
+		</tr>
+		<tr>
+			<td>A2</td>
+			<td>B2</td>
+		</tr>
+	</table>
+	`
+	let divTest = `
+	<div style="margin:0; background:red; font-weight:500; width:596px;">
+		red background; bold text; margin 0
+	</div>
+	<div style="background:black; color:white; width:596px;">
+		some really long text blah blah let's make the text really long to see if it wraps or overflows I need it to be quite a bit longer please and thank you supercalifragilisticexpialidocius
+	</div>
+	`
+	let doc = new jsPDF({ hotfixes: ["px_scaling"], unit: "pt" })
+	doc.html(divTest, {
+		// doc.html(tableTest, {
+		callback: function (doc) {
+			doc.save("a4.pdf")
+		},
+		x: 0,
+		y: 0,
+	})
 }
