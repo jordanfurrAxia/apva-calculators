@@ -2,13 +2,35 @@
 
 <html lang="en">
 	<head>
+		<link rel="stylesheet" href="./reset.css" type="text/css" media="all" />
 		<link rel="stylesheet" href="./styles.css" />
-		<title>APVA</title>
+		<title>APVA - Delaware Life</title>
 		<link rel="icon" href="assets/images/cropped-Delaware-Life-new-assets_favicon-32x32.png" sizes="32x32" />
 		<link rel="icon" href="assets/images/cropped-Delaware-Life-new-assets_favicon-192x192.png" sizes="192x192" />
 	</head>
 
 	<body>
+		<header class="header">
+			<div class="header-container">
+				<div class="header-menu menu">
+					<a href="/" class="menu-logo">
+						<img alt="Logo" loading="lazy" src="assets/images/delaware-lifelogo.png" title="delaware-lifelogo" height="auto" width="auto" />
+					</a>
+					<a class="menu-text"> Menu </a>
+					<nav class="menu-body">
+						<ul class="menu-list">
+							<li>
+								<a href="https://www.delawarelife.com/solutions/" class="menu-link">Retirement Solutions</a>
+							</li>
+							<li><a href="https://www.delawarelife.com/our-company" class="menu-link">Who We Are</a></li>
+							<li><a href="https://www.delawarelife.com/products" class="menu-link">Products</a></li>
+							<li><a href="https://advisors.delawarelife.com/" class="menu-link custom-grey-color">For Financial Professionals</a></li>
+							<li><a href="https://www.delawarelife.com/account" class="menu-link as-button">Account Login</a></li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</header>
 		<!-- <div id="testBtn">TEST BUTTON</div> -->
 		<div class="j-form-bg">
 			<div class="j-form-container">
@@ -145,8 +167,102 @@
 			<div id="summaryContents" class="j-summary-contents">
 				<div class="j-summary-banner">Summary</div>
 				<div id="summaryTable" class="j-summary-table"></div>
+				<div id="actualSummaryTable" class="j-actual-summary-table"></div>
+				<div class="j-full-width-flex">
+					<div id="clientReportBtn" class="j-client-report-btn">Create Client Report</div>
+				</div>
 			</div>
 		</div>
+		<div id="pdf"></div>
+		<footer id="footer" class="footer">
+            <div class="container">
+                <div class="footer-menu">
+                    <ul>
+                        <li>
+                            <a href="https://www.delawarelife.com/solutions">Retirement solutions</a>
+                        </li>
+                        <li>
+                            <a href="https://www.delawarelife.com/our-company">Who we are</a>
+                        </li>
+                        <li>
+                            <a href="https://www.delawarelife.com/products">Products</a>
+                        </li>
+                        <li>
+                            <a href="https://www.delawarelife.com/news-events/">What&#8217;s new</a></li>
+                        <li>
+                            <a href="https://jobs.jobvite.com/group1001/jobs">Careers</a>
+                        </li>
+                        <li>
+                            <a href="https://www.delawarelife.com/contact-us">Contact Us</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="footer-text">
+                    <p class="footer-bold">
+                        Check the background of your financial professional or Clarendon Insurance Agency, Inc. 
+                        on <a href="https://brokercheck.finra.org/">FINRA's BrokerCheck.</a>
+                    </p>
+                    <p class="footer-large-text">
+                        Variable annuities are sold by prospectus. Investors should carefully consider a variable annuity’s risks, charges, 
+                        limitations and investment goals of underlying investment options prior to making any investment decisions. 
+                        This and other information is available in the product prospectus, as well as the underlying investment option prospectuses.
+                    </p> 
+                    <p>
+                        Guarantees are subject to the financial strength and claims-paying ability of the issuing 
+                        insurance company and are subject to product terms, exclusions, and limitations.
+                    </p>
+                    <p>
+                        Annuities are long-term investments vehicles designed for retirement purposes. Annuity contracts contain exclusions, 
+                        limitations, reductions of benefits, and terms for keeping them in force. Your financial professional can provide you with complete details.
+                    </p>
+                    <p>
+                        Annuity products issued by Delaware Life Insurance Company (Waltham, MA), which is authorized to transact business in all states (except New York), 
+                        the District of Columbia, Puerto Rico, and the U.S. Virgin Islands and in New York by Delaware Life Insurance Company of New York (New York, NY), 
+                        which is authorized to transact business in New York and Rhode Island. Variable contracts are distributed through Clarendon Insurance Agency, 
+                        Inc. (Waltham, MA), member FINRA. All three companies are members of Group One Thousand One, LLC (Group1001). Each company is responsible for 
+                        its own financial condition and contractual obligations. Product availability and features may vary by state.
+                    </p>
+                    <p>
+                        This communication is for informational purposes only. It is not intended to provide, and should not be interpreted as individualized investment, 
+                        legal, or tax advice. To obtain such advice, please consult with your investment, legal, or tax professional.
+                    </p>
+                    <p>
+                        NOT FDIC/NCUA INSURED | MAY LOSE VALUE | NO BANK/CREDIT UNION GUARANTEE | NOT A DEPOSIT | NOT INSURED BY ANY FEDERAL GOVERNMENT AGENCY
+                    </p>
+                    <p>
+                        This website is for U.S. persons only, and information contained on this site does not and is not intended to constitute an advertisement, 
+                        solicitation, or offer for sale in any jurisdiction, outside the United States of America, where such use would be prohibited or regulated.
+                    </p>
+                    <p>
+                        ©2021 Delaware Life Insurance Company. All rights reserved.</br>
+                        1601 Trapelo Road, Suite 30, Waltham, MA 02451</br>
+                        2021060065 EXP 08/31/22
+                    </p>
+                </div>
+                <div class="footer-menu">
+                    <ul>
+                        <li>
+                            <a href="https://www.delawarelife.com/stateinfo/">State information</a>
+                        </li>
+                        <li class="footer-menu-delimiter">
+                            <a>|</a>
+                        </li>
+                        <li>
+                            <a href="https://www.delawarelife.com/legal-information">Legal information</a>
+                        </li>
+                        <li class="footer-menu-delimiter">
+                            <a>|</a>
+                        </li>
+                        <li>
+                            <a href="https://www.delawarelife.com/privacy">Privacy &#038; security</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+		<script src="../node_modules/html2canvas/dist/html2canvas.min.js"></script>
 		<script src="./calcScript.js"></script>
+		<script src="./navScript.js"></script>
 	</body>
 </html>
