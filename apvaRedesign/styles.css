@@ -44,7 +44,7 @@ body {
 .container {
 	max-width: 1180px;
 	margin: 0 auto;
-	padding: 5% 0;
+	padding: 3% 0 5% 0;
 }
 
 .j-bold-font {
@@ -159,11 +159,29 @@ body {
 	transition: ease 0.3s;
 }
 
+.j-summary-and-footer-container {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+.j-summary-and-footer-container-slide {
+	animation: summarySlide 0.7s ease;
+}
+@keyframes summarySlide {
+	0% {
+		transform: translateY(-650px);
+	}
+	100% {
+		transform: translateY(0px);
+	}
+}
+
 .j-summary-table-container {
 	position: relative;
-	display: flex;
+	display: none;
 	justify-content: center;
 	height: auto;
+	min-height: max-content;
 }
 
 .j-summary-table {
@@ -198,10 +216,10 @@ body {
 }
 
 .j-actual-summary-table th:first-child {
-	border-radius: 10px 0 0 0;
+	border-radius: 8px 0 0 0;
 }
 .j-actual-summary-table th:last-child {
-	border-radius: 0 10px 0 0;
+	border-radius: 0 8px 0 0;
 }
 .j-actual-summary-table th:not(:last-child) {
 	border-right: 2px solid white;
@@ -232,7 +250,6 @@ body {
 	background-color: transparent;
 	color: #63666a;
 	font-weight: 500;
-	z-index: -2;
 }
 
 .footer .footer-menu ul {
@@ -313,16 +330,19 @@ body {
 }
 
 .j-summary-contents {
-	position: absolute;
+	/* position: absolute; */
 	width: 100%;
 	top: -650px;
-	z-index: -1;
 }
 
 .j-summary-slide-in {
-	position: absolute;
+	/* position: absolute; */
 	top: 0px;
 	transition: ease 0.5s;
+}
+
+.j-summary-show {
+	display: flex;
 }
 
 .header {
