@@ -61,7 +61,7 @@ function runCalculation() {
 
 	ageAtIncome = getYoungestAge() + parseInt(yearsDeferred.value)
 	withdrawPercent = withdrawMap.get(ageAtIncome)[parseInt(glwb.value) + parseInt(livesCovered.value)]
-	bonusRate = parseInt(glwb.value) == 0 ? 0.0625 : 0.0725
+	bonusRate = parseInt(glwb.value) == 0 ? 0.06 : 0.07
 
 	if (solveFor.value == "annual") {
 		populateBenefitTable()
@@ -446,7 +446,6 @@ function handleClientReport() {
 	<div id="page1" style="margin:0; width:596px; height:841px; font-family: helvetica, arial, verdana, sans-serif;">
 	`
 	pdfHTML += formatPDFSummary("70px")
-	// 611 pixels left on page
 	pdfHTML += generatePDFPageOne()
 	pdfHTML += formatPDFFooter("781px", "1")
 	pdfHTML += `
@@ -509,7 +508,7 @@ function generatePDFPageThree() {
 			delawarelife.com
 		</p>
 		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
-			© 2021 Delaware Life Insurance Company. All rights reserved.
+			© 2022 Delaware Life Insurance Company. All rights reserved.
 		</p>
 		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
 			All product guarantees, including optional living and death benefits, are subject to the claims-paying ability and financial strength of the issuing 
@@ -548,7 +547,7 @@ function generatePDFPageThree() {
 		</p>
 		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
 			<b>Bonus Rate:</b> The GLWB provides a Bonus Rate that may be used in determining increases to the Withdrawal Benefit Base during the Bonus Period. 
-			The Bonus Period is in effect until the earlier of the Income Start Date or [10] years from issue.
+			The Bonus Period is in effect until the earlier of the Income Start Date or 10 years from issue.
 		</p>
 		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
 			Please see the prospectus for a more complete description of the benefits and limitations of the GLWB.
@@ -663,7 +662,7 @@ function generatePDFPageOne() {
 
 function formatPDFFooter(top, pageNum) {
 	return `
-		<div id="footer" style="width:596px; height:60px; position:absolute; top:${top}; display:flex; flex-direction:column; justify-content:center; align-items:center; font-size:6px; color:#666666; border-top:1px solid #bbbbbb;">
+		<div id="footer" style="width:596px; height:60px; position:absolute; top:${top}; display:flex; flex-direction:column; justify-content:center; align-items:center; font-size:6px; color:#666666; border-top:1px solid #cccccc;">
 			<p style="margin:0 0 10px 0;">FOR FINANCIAL PROFESSIONALS ONLY. NOT FOR USE WITH THE PUBLIC.</p>
 			<p style="margin:0;">${pageNum} / 3</p>
 		</div>
@@ -672,6 +671,8 @@ function formatPDFFooter(top, pageNum) {
 }
 
 function formatPDFSummary(top) {
+	let fontSize = "9px"
+	let yearOrYears = parseInt(yearsDeferred.value) == 1 ? "year" : "years"
 	let today = new Date()
 	let dateStr = today.getMonth() + 1 + "/" + today.getDate() + "/" + today.getFullYear()
 	return `
@@ -680,57 +681,57 @@ function formatPDFSummary(top) {
 			<p style="margin:0;">Guaranteed Lifetime Withdrawal Benefit (GLWB) Income Summary</p>
 		</div>
 		<div id="summaryBoxContainer" style="position:absolute; top:${top}; margin:10px; display:flex; justify-content:center; width:556px; height: 140px; padding:10px; background:#e6e9ed;">
-			<div id="summaryTitle" style="position: absolute; top:20px; left:20px; font-size:10px; font-weight:700;">
+			<div id="summaryTitle" style="position: absolute; top:20px; left:20px; font-size:11px; font-weight:700;">
 				Summary
 			</div>
 			<div id="third1" style="display:flex; flex-direction:column; margin-right:30px; justify-content:center;">
 				<div>
-					<p style="font-size:8px; font-weight:700; display:inline;">GLWB/Lives Covered: </p>
-					<p style="font-size:8px; font-weight:200; display:inline;">${createGlwbAndLivesCoveredString()}</p>
+					<p style="font-size:${fontSize}; font-weight:700; display:inline;">GLWB/Lives Covered: </p>
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${createGlwbAndLivesCoveredString()}</p>
 				</div>
 				<div>
-					<p style="font-size:8px; font-weight:700; display:inline;">Initial Purchase Payment: </p>
-					<p style="font-size:8px; font-weight:200; display:inline;">${displayDollars(initialPayment)}</p>
+					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Initial Purchase Payment: </p>
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${displayDollars(initialPayment)}</p>
 				</div>
 				<div>
-					<p style="font-size:8px; font-weight:700; display:inline;">Annual Withdrawal Amount: </p>
-					<p style="font-size:8px; font-weight:200; display:inline;">${displayDollars(annualIncome)}</p>
+					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Annual Withdrawal Amount: </p>
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${displayDollars(annualIncome)}</p>
 				</div>
 			</div>
 			<div id="third2" style="display:flex; flex-direction:column; margin-right:30px; justify-content:center;">
 				<div>
-					<p style="font-size:8px; font-weight:700; display:inline;">Today's Date: </p>
-					<p style="font-size:8px; font-weight:200; display:inline;">${dateStr}</p>					
+					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Today's Date: </p>
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${dateStr}</p>					
 				</div>
 				<div>
-					<p style="font-size:8px; font-weight:700; display:inline;">Bonus Rate: </p>
-					<p style="font-size:8px; font-weight:200; display:inline;">${displayPercent(bonusRate)}</p>					
+					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Bonus Rate: </p>
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${displayPercent(bonusRate)}</p>					
 				</div>
 				<div>
-					<p style="font-size:8px; font-weight:700; display:inline;">Income Deferral Period: </p>
-					<p style="font-size:8px; font-weight:200; display:inline;">${yearsDeferred.value}</p>					
+					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Income Deferral Period: </p>
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${yearsDeferred.value} ${yearOrYears}</p>					
 				</div>
 				<div>
-					<p style="font-size:8px; font-weight:700; display:inline;">Lifetime Withdrawal Percentage: </p>
-					<p style="font-size:8px; font-weight:200; display:inline;">${displayPercent(withdrawPercent)}</p>					
+					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Lifetime Withdrawal Percentage: </p>
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${displayPercent(withdrawPercent)}</p>					
 				</div>
 			</div>
 			<div id="third3" style="display:flex; flex-direction:column; justify-content:center;">
 				<div>
-					<p style="font-size:8px; font-weight:700; display:inline;">State: </p>
-					<p style="font-size:8px; font-weight:200; display:inline;">${state.value}</p>					
+					<p style="font-size:${fontSize}; font-weight:700; display:inline;">State: </p>
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${state.value}</p>					
 				</div>
 				<div>
-					<p style="font-size:8px; font-weight:700; display:inline;">Current Age: </p>
-					<p style="font-size:8px; font-weight:200; display:inline;">${currentAge.value}</p>					
+					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Current Age: </p>
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${currentAge.value}</p>					
 				</div>
 				<div>
-					<p style="font-size:8px; font-weight:700; display:inline;">Spouse Age: </p>
-					<p style="font-size:8px; font-weight:200; display:inline;">${parseInt(livesCovered.value) == 0 ? "N/A" : spouseAge.value}</p>					
+					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Spouse Age: </p>
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${parseInt(livesCovered.value) == 0 ? "N/A" : spouseAge.value}</p>					
 				</div>
 				<div>
-					<p style="font-size:8px; font-weight:700; display:inline;">Age at Income Start: </p>
-					<p style="font-size:8px; font-weight:200; display:inline;">${ageAtIncome}</p>					
+					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Age at Income Start: </p>
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${ageAtIncome}</p>					
 				</div>
 			</div>
 		</div>
