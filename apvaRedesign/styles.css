@@ -141,7 +141,7 @@ body {
 }
 
 .j-client-report-btn {
-	margin: 1rem;
+	margin: 2rem 1rem 0 1rem;
 	font-weight: 700;
 	padding: 8px;
 	width: 170px;
@@ -165,11 +165,11 @@ body {
 	overflow: hidden;
 }
 .j-summary-and-footer-container-slide {
-	animation: summarySlide 0.7s ease;
+	animation: summarySlide 0.9s ease;
 }
 @keyframes summarySlide {
 	0% {
-		transform: translateY(-650px);
+		transform: translateY(-938px);
 	}
 	100% {
 		transform: translateY(0px);
@@ -188,7 +188,7 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 2rem;
+	padding: 2rem 2rem 0.5rem 2rem;
 }
 
 .j-actual-summary-table {
@@ -244,6 +244,13 @@ body {
 	padding-left: 1rem;
 	padding-right: 1rem;
 	/* padding-bottom: 1.5rem; */
+}
+
+.j-definitions {
+	padding: 20px 20px 0 20px;
+	margin: auto;
+	max-width: 900px;
+	font-size: 14px;
 }
 
 .footer {
@@ -325,7 +332,10 @@ body {
 	display: inline;
 }
 
-.j-summary-table-element:not(:last-child) {
+/* .j-summary-table-element:not(:last-child) {
+	margin-bottom: 1.5rem;
+} */
+.j-summary-table-element {
 	margin-bottom: 1.5rem;
 }
 
