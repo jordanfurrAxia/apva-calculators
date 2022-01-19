@@ -25,19 +25,26 @@ let greyColor = "#e6e9ed"
 
 addEventListeners()
 
+let stateVal = ""
 let initialPayment,
 	annualIncome,
 	withdrawBase,
 	ageAtIncome,
 	withdrawPercent,
-	bonusRate = 0
+	bonusRate,
+	glwbVal,
+	livesCoveredVal,
+	currentAgeVal,
+	spouseAgeVal,
+	solveForVal,
+	deferred = 0
 let benefitTable = []
 
 function handleNextBtn() {
-	getIncomeOrInitialInt()
 	clearValues()
+	storeUserInput()
 	clearErrorMessages()
-	let testResults = testValues()
+	let testResults = validateInput()
 
 	for (let input of testResults) {
 		if (input[0] != "v") {
@@ -57,23 +64,17 @@ function handleNextBtn() {
 }
 
 function runCalculation() {
-	if (solveFor.value == "annual") {
-		initialPayment = getIncomeOrInitialInt()
-	} else if (solveFor.value == "initial") {
-		annualIncome = getIncomeOrInitialInt()
-	}
+	ageAtIncome = getYoungestAge() + deferred
+	withdrawPercent = withdrawMap.get(ageAtIncome)[glwbVal + livesCoveredVal]
+	bonusRate = glwbVal == 0 ? 0.06 : 0.07
 
-	ageAtIncome = getYoungestAge() + parseInt(yearsDeferred.value)
-	withdrawPercent = withdrawMap.get(ageAtIncome)[parseInt(glwb.value) + parseInt(livesCovered.value)]
-	bonusRate = parseInt(glwb.value) == 0 ? 0.06 : 0.07
-
-	if (solveFor.value == "annual") {
+	if (solveForVal == "annual") {
 		populateBenefitTable()
-		withdrawBase = benefitTable[Math.min(parseInt(yearsDeferred.value), 40)][1]
+		withdrawBase = benefitTable[Math.min(deferred, 40)][1]
 		annualIncome = withdrawPercent * withdrawBase
-	} else if (solveFor.value == "initial") {
+	} else if (solveForVal == "initial") {
 		withdrawBase = annualIncome / withdrawPercent
-		initialPayment = withdrawBase / (bonusRate * Math.min(10, parseInt(yearsDeferred.value)) + 1)
+		initialPayment = withdrawBase / (bonusRate * Math.min(10, deferred) + 1)
 
 		populateBenefitTable()
 	}
@@ -93,6 +94,24 @@ function displaySummary() {
 		document.getElementById("footer").classList.add("j-summary-and-footer-container-slide")
 		document.getElementById("summaryTableContainer").classList.add("j-summary-show")
 	}, 3)
+}
+
+function storeUserInput() {
+	stateVal = state.value
+	solveForVal = solveFor.value
+	if (solveForVal == "annual") {
+		initialPayment = getIncomeOrInitialInt()
+	} else if (solveForVal == "initial") {
+		annualIncome = getIncomeOrInitialInt()
+	}
+	glwbVal = parseInt(glwb.value)
+	livesCoveredVal = parseInt(livesCovered.value)
+	currentAgeVal = parseInt(currentAge.value)
+	if (livesCoveredVal == 1) {
+		//joint life selected. otherwise spouseAgeVal stays at 0
+		spouseAgeVal = parseInt(spouseAge.value)
+	}
+	deferred = parseInt(yearsDeferred.value)
 }
 
 function createActualSummaryTableHTML() {
@@ -117,7 +136,7 @@ function createActualSummaryTableHTML() {
 			let currentAgeDisplayed = getYoungestAge() + counter
 
 			if (currentAgeDisplayed > 54) {
-				wPercent = withdrawMap.get(getYoungestAge() + counter)[parseInt(glwb.value) + parseInt(livesCovered.value)]
+				wPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
 			}
 			if (ageAtIncome == getYoungestAge() + counter || (!rowHighlighted && counter == 10)) {
 				returnHTML += "<tr style='background:#F4B860;'>"
@@ -175,7 +194,7 @@ function createSummaryTableHTML() {
 		</div>
 		<div class="j-summary-table-element">
 			<p class="j-bold-font">Years Income is Deferred:  </p>
-			<p>${parseInt(yearsDeferred.value)}</p>
+			<p>${deferred}</p>
 		</div>
 		<div class="j-summary-table-element">
 			<p class="j-bold-font">Lifetime Withdrawal Percentage:  </p>
@@ -185,14 +204,14 @@ function createSummaryTableHTML() {
 	<div class="j-third-flex">
 		<div class="j-summary-table-element">
 			<p class="j-bold-font">Client's Current Age:  </p>
-			<p>${parseInt(currentAge.value)}</p>
+			<p>${currentAgeVal}</p>
 		</div>
 	`
-	if (parseInt(livesCovered.value) == 1) {
+	if (livesCoveredVal == 1) {
 		returnHTML += `
 		<div class="j-summary-table-element">
 			<p class="j-bold-font">Spouse's Current Age:  </p>
-			<p>${parseInt(spouseAge.value)}</p>
+			<p>${spouseAgeVal}</p>
 		</div>
 		`
 	}
@@ -221,13 +240,12 @@ function populateBenefitTable() {
 }
 
 function getYoungestAge() {
-	if (parseInt(livesCovered.value) == 0) {
+	if (livesCoveredVal == 0) {
 		// livesCoveredStr = "Single Life"
-		return parseInt(currentAge.value)
+		return currentAgeVal
 	} else {
 		// livesCoveredStr = "Joint Life"
-
-		return Math.min(parseInt(spouseAge.value), parseInt(currentAge.value))
+		return Math.min(spouseAgeVal, currentAgeVal)
 	}
 }
 
@@ -235,12 +253,12 @@ function createGlwbAndLivesCoveredString() {
 	let glwbStr = ""
 	let livesCoveredStr = ""
 	// glwb == 0 when income boost; 2 when income control
-	if (parseInt(glwb.value) == 0) {
+	if (glwbVal == 0) {
 		glwbStr = "Income Boost"
 	} else {
 		glwbStr = "Income Control"
 	}
-	if (parseInt(livesCovered.value) == 0) {
+	if (livesCoveredVal == 0) {
 		livesCoveredStr = "Single Life"
 	} else {
 		livesCoveredStr = "Joint Life"
@@ -248,8 +266,7 @@ function createGlwbAndLivesCoveredString() {
 	return glwbStr + "/" + livesCoveredStr
 }
 
-// testValues validates the values inputted by the user. returns a 2D array
-function testValues() {
+function validateInput() {
 	// returnArray indices represent:
 	// 0 = income or initial payment
 	// 1 = current age
@@ -273,7 +290,7 @@ function testValues() {
 function testIncomeOrInitialPaymentValues() {
 	let returnArray = ["v", "v"]
 
-	if (solveFor.value == "annual") {
+	if (solveForVal == "annual") {
 		if (!incomeOrInitialPayment.value || getIncomeOrInitialInt() < 6000 || getIncomeOrInitialInt() > 3000000) {
 			returnArray = ["incomeOrInitialPayment", "'Initial Purchase Payment' must be between 6000 and 3,000,000."]
 		}
@@ -290,14 +307,14 @@ function testIncomeOrInitialPaymentValues() {
 function testCurrentAgeValues() {
 	let returnArray = ["v", "v"]
 
-	if (parseInt(glwb.value) == 0) {
+	if (glwbVal == 0) {
 		// glwb == 0 when income boost; 2 when income control
-		if (!currentAge.value || parseInt(currentAge.value) < 45 || parseInt(currentAge.value) > 80) {
+		if (!currentAge.value || currentAgeVal < 45 || currentAgeVal > 80) {
 			returnArray = ["currentAge", "'Current Age' must be between 45 and 80."]
 		}
 	} else {
 		// glwb == 2 == 'income control' in this case
-		if (!currentAge.value || parseInt(currentAge.value) < 55 || parseInt(currentAge.value) > 80) {
+		if (!currentAge.value || currentAgeVal < 55 || currentAgeVal > 80) {
 			returnArray = ["currentAge", "'Current Age' must be between 55 and 80."]
 		}
 	}
@@ -308,15 +325,15 @@ function testCurrentAgeValues() {
 function testSpouseAgeValues() {
 	let returnArray = ["v", "v"]
 
-	if (parseInt(livesCovered.value) == 1) {
-		if (parseInt(glwb.value) == 0) {
+	if (livesCoveredVal == 1) {
+		if (glwbVal == 0) {
 			// glwb == 0 when income boost; 2 when income control
-			if (!spouseAge.value || parseInt(spouseAge.value) < 45 || parseInt(spouseAge.value) > 80) {
+			if (!spouseAge.value || spouseAgeVal < 45 || spouseAgeVal > 80) {
 				returnArray = ["spouseAge", "'Spouse's Current Age' must be between 45 and 80."]
 			}
 		} else {
 			// glwb == 2 == 'income control' in this case
-			if (!spouseAge.value || parseInt(spouseAge.value) < 55 || parseInt(spouseAge.value) > 80) {
+			if (!spouseAge.value || spouseAgeVal < 55 || spouseAgeVal > 80) {
 				returnArray = ["spouseAge", "'Spouse's Current Age' must be between 55 and 80."]
 			}
 		}
@@ -328,11 +345,11 @@ function testSpouseAgeValues() {
 function testYearsDeferredValues() {
 	let returnArray = ["v", "v"]
 
-	if (!yearsDeferred.value || parseInt(yearsDeferred.value) < 0 || parseInt(yearsDeferred.value) > 50) {
+	if (!yearsDeferred.value || deferred < 0 || deferred > 50) {
 		returnArray = ["yearsDeferred", "'Years Income is Deferred' must be between 0 and 50."]
 	} else {
 		// input range is valid
-		let incomeStartAge = parseInt(yearsDeferred.value) + getYoungestAge()
+		let incomeStartAge = deferred + getYoungestAge()
 		if (!incomeStartAge || incomeStartAge < 55 || incomeStartAge > 100) {
 			returnArray = ["yearsDeferred", "Attained age at income start must be between 55 and 100."]
 		}
@@ -349,17 +366,23 @@ function clearErrorMessages() {
 }
 
 function clearValues() {
+	stateVal = ""
 	initialPayment = 0
 	annualIncome = 0
 	withdrawBase = 0
 	ageAtIncome = 0
 	withdrawPercent = 0
 	bonusRate = 0
+	deferred = 0
+	glwbVal = 0
+	livesCoveredVal = 0
+	currentAgeVal = 0
+	spouseAgeVal = 0
 	benefitTable = []
 }
 
 function handleSolveFor() {
-	if (solveFor.value && solveFor.value == "annual") {
+	if (solveFor.value == "annual") {
 		incomeOrInitialPaymentLbl.innerHTML = "Initial Purchase Payment: <sup>*</sup>"
 	} else {
 		incomeOrInitialPaymentLbl.innerHTML = "Annual Withdrawal Amount: <sup>*</sup>"
@@ -367,7 +390,7 @@ function handleSolveFor() {
 }
 
 function handleLivesCovered() {
-	if (livesCovered.value && parseInt(livesCovered.value) == 1) {
+	if (parseInt(livesCovered.value) == 1) {
 		spouseAgeDiv.style.display = "flex"
 	} else {
 		spouseAgeDiv.style.display = "none"
@@ -604,7 +627,7 @@ function generatePDFPageTwo() {
 			let currentAgeDisplayed = getYoungestAge() + counter
 
 			if (currentAgeDisplayed > 54) {
-				wPercent = withdrawMap.get(getYoungestAge() + counter)[parseInt(glwb.value) + parseInt(livesCovered.value)]
+				wPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
 			}
 			if (ageAtIncome == getYoungestAge() + counter || (!rowHighlighted && counter == 10)) {
 				returnHTML += "<tr style='background:#F4B860;'>"
@@ -633,7 +656,7 @@ function generatePDFPageTwo() {
 }
 
 function generatePDFPageOne() {
-	let yearOrYears = parseInt(yearsDeferred.value) == 1 ? "year" : "years"
+	let yearOrYears = deferred == 1 ? "year" : "years"
 	let percentOfInitial = annualIncome / initialPayment
 	let today = new Date()
 	let dateStr = today.getMonth() + 1 + "/" + today.getDate() + "/" + today.getFullYear()
@@ -642,10 +665,10 @@ function generatePDFPageOne() {
 	<div id="page1content" style="margin:0; display:flex; flex-direction:column; position:absolute; top:250px; width:596px; height:531px; justify-content:center; align-items:center;">
 		<div id="deferralContainer" style="width:526px; margin:0; margin-top:40px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
 			<div id="deferralTitle" style="background:${accentColor}; position:absolute; top:22px; left:50px; color:white; border-radius:6px; font-size:12px; font-weight:700; padding:10px; border-bottom: 1px solid white;">
-				Income Deferral Period: ${yearsDeferred.value} ${yearOrYears}
+				Income Deferral Period: ${deferred} ${yearOrYears}
 			</div>
 			<div id="deferralText" style="background:${greyColor}; font-size:10px; font-weight:300; padding:20px 10px 10px 10px;">
-				By deferring when you begin taking income by ${yearsDeferred.value} ${yearOrYears}, (Age ${getYoungestAge()} today, to age ${ageAtIncome}), your Withdrawal Benefit
+				By deferring when you begin taking income by ${deferred} ${yearOrYears}, (Age ${getYoungestAge()} today, to age ${ageAtIncome}), your Withdrawal Benefit
 				Base will grow by a ${displayPercent(bonusRate)} Bonus Rate* for each of those years. When you start income, it will be based off a 
 				Withdrawal Benefit Base** of ${displayDollars(withdrawBase)}.
 			</div>
@@ -710,7 +733,7 @@ function formatPDFFooter(top, pageNum) {
 
 function formatPDFSummary(top) {
 	let fontSize = "9px"
-	let yearOrYears = parseInt(yearsDeferred.value) == 1 ? "year" : "years"
+	let yearOrYears = deferred == 1 ? "year" : "years"
 	let today = new Date()
 	let dateStr = today.getMonth() + 1 + "/" + today.getDate() + "/" + today.getFullYear()
 	return `
@@ -747,7 +770,7 @@ function formatPDFSummary(top) {
 				</div>
 				<div>
 					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Income Deferral Period: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${yearsDeferred.value} ${yearOrYears}</p>					
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${deferred} ${yearOrYears}</p>					
 				</div>
 				<div>
 					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Lifetime Withdrawal Percentage: </p>
@@ -757,15 +780,15 @@ function formatPDFSummary(top) {
 			<div id="third3" style="display:flex; flex-direction:column; justify-content:center;">
 				<div>
 					<p style="font-size:${fontSize}; font-weight:700; display:inline;">State: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${state.value}</p>					
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${stateVal}</p>					
 				</div>
 				<div>
 					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Current Age: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${currentAge.value}</p>					
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${currentAgeVal}</p>					
 				</div>
 				<div>
 					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Spouse Age: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${parseInt(livesCovered.value) == 0 ? "N/A" : spouseAge.value}</p>					
+					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${livesCoveredVal == 0 ? "N/A" : spouseAgeVal}</p>					
 				</div>
 				<div>
 					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Age at Income Start: </p>
