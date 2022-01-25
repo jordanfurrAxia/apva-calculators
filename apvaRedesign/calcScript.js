@@ -20,7 +20,9 @@ let spouseAgeDiv = document.getElementById("spouseAgeDiv")
 let glwb = document.getElementById("glwb")
 let pdfDiv = document.getElementById("pdf")
 
-let accentColor = "#0a0d42"
+// let accentColor = "#0a0d42" // DL dark blue
+let accentColor = "#00463b" // DL APVA green
+let accentColorLight = "#00b89c"
 let greyColor = "#e6e9ed"
 
 addEventListeners()
@@ -129,7 +131,7 @@ function createActualSummaryTableHTML() {
 	let rowHighlighted = false
 	let currentRowHighlighted = false
 	for (let row of benefitTable) {
-		if (counter < 11) {
+		if (counter < 11 && !rowHighlighted) {
 			currentRowHighlighted = false
 			let wPercent = "-"
 			let bBase = Math.round(row[1])
@@ -492,21 +494,17 @@ function handleClientReport() {
 	let pdfHTML = `
 	<div id="page1" style="margin:0; width:596px; height:841px; font-family: helvetica, arial, verdana, sans-serif;">
 	`
-	pdfHTML += formatPDFSummary("70px")
+	pdfHTML += formatPDFSummary("110px")
 	pdfHTML += generatePDFPageOne()
-	pdfHTML += formatPDFFooter("781px", "1")
 	pdfHTML += `
 	<div id="page2" style="margin:0; width:596px; height:841px; font-family: helvetica, arial, verdana, sans-serif;">
 	`
-	pdfHTML += formatPDFSummary("911px")
+	pdfHTML += formatPDFSummary("951px")
 	pdfHTML += generatePDFPageTwo()
-
-	pdfHTML += formatPDFFooter("1623px", "2")
 	pdfHTML += `
 	<div id="page3" style="margin:0; width:596px; height:841px; font-family: helvetica, arial, verdana, sans-serif;">
 	`
 	pdfHTML += generatePDFPageThree()
-	pdfHTML += formatPDFFooter("2465px", "3")
 
 	let today = new Date()
 	let dateStr = today.getMonth() + 1 + "." + today.getDate() + "." + today.getFullYear() + "_" + today.getHours() + "." + today.getMinutes()
@@ -600,28 +598,30 @@ function generatePDFPageThree() {
 			Please see the prospectus for a more complete description of the benefits and limitations of the GLWB.
 		</p>
 	</div>
+	</div>
 	`
 }
 
 function generatePDFPageTwo() {
 	let returnHTML = `
-	<div id="page2content" style="margin:0; display:flex; flex-direction:column; position:absolute; top:1091px; width:596px; height:531px; justify-content:center; align-items:center;">
+	<div id="page2content" style="margin:0; display:flex; flex-direction:column; position:absolute; top:1101px; width:596px; height:583px; justify-content:center; align-items:center;">
+		<div id="tableContainer" style="height:523px; padding:auto; display:flex; align-items:center;">
 		<table style="font-size:11px; border-collapse: collapse">
 			<colgroup>
-				<col span="5" style="width:90px;"></col>
+				<col span="5" style="width:110px;"></col>
 			</colgroup>
 			<tr>
-				<th style="border-right: 2px solid white; padding:5px; color:white; background:${accentColor}; border-radius:5px 0 0 0;">Year</th>
-				<th style="border-right: 2px solid white; padding:5px; color:white; background:${accentColor};">Age</th>
-				<th style="border-right: 2px solid white; padding:5px; color:white; background:${accentColor};">Withdrawal Benefit Base</th>
-				<th style="border-right: 2px solid white; padding:5px; color:white; background:${accentColor};">Annual Withdrawal Amount</th>
-				<th style="padding:5px; color:white; background:${accentColor}; border-radius:0 5px 0 0;">Lifetime Withdrawal Percent</th>
+				<th style="border-right: 2px solid white; padding:10px; color:white; background:${accentColor}; border-radius:5px 0 0 0;">Year</th>
+				<th style="border-right: 2px solid white; padding:10px; color:white; background:${accentColor};">Age</th>
+				<th style="border-right: 2px solid white; padding:10px; color:white; background:${accentColor};">Withdrawal Benefit Base</th>
+				<th style="border-right: 2px solid white; padding:10px; color:white; background:${accentColor};">Annual Withdrawal Amount</th>
+				<th style="padding:10px; color:white; background:${accentColor}; border-radius:0 5px 0 0;">Lifetime Withdrawal Percent</th>
 			</tr>
 	`
 	let counter = 0
 	let rowHighlighted = false
 	for (let row of benefitTable) {
-		if (counter < 11) {
+		if (counter < 11 && !rowHighlighted) {
 			let wPercent = "-"
 			let bBase = Math.round(row[1])
 			let currentAgeDisplayed = getYoungestAge() + counter
@@ -638,18 +638,30 @@ function generatePDFPageTwo() {
 				returnHTML += "<tr>"
 			}
 			returnHTML += `
-				<td style="text-align:center; padding-top:10px; padding-bottom:10px; border-right: 2px solid white;">${row[0]}</td>
-				<td style="text-align:center; padding-top:10px; padding-bottom:10px; border-right: 2px solid white;">${currentAgeDisplayed}</td>
-				<td style="text-align:center; padding-top:10px; padding-bottom:10px; border-right: 2px solid white;">${displayDollars(bBase)}</td>
-				<td style="text-align:center; padding-top:10px; padding-bottom:10px; border-right: 2px solid white;">${wPercent == "-" ? "-" : displayDollars(bBase * wPercent)}</td>
-				<td style="text-align:center; padding-top:10px; padding-bottom:10px;">${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
+				<td style="text-align:center; padding:12px; border-right: 2px solid white;">${row[0]}</td>
+				<td style="text-align:center; padding:12px; border-right: 2px solid white;">${currentAgeDisplayed}</td>
+				<td style="text-align:center; padding:12px; border-right: 2px solid white;">${displayDollars(bBase)}</td>
+				<td style="text-align:center; padding:12px; border-right: 2px solid white;">${wPercent == "-" ? "-" : displayDollars(bBase * wPercent)}</td>
+				<td style="text-align:center; padding:12px;">${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
 			</tr>
 			`
 		}
 		counter++
 	}
 	returnHTML += `
-		</table>
+			</table>
+			</div>
+			<div id="finePrintContainer" style="background:${greyColor}; gap:7px; padding:5px 20px 5px 20px; font-size:8px; height:60px; display:flex; flex-direction:column; justify-content:center; margin-top:auto; margin-bottom:0px;">
+				<p style="margin:0;">
+					The row highlighted in orange represents the year income is turned on based on the client information provided. These values correspond with the 
+					values used on the previous page. Rows that are not highlighted in orange represent the annual income amount that would be guaranteed if the client 
+					elected to turn on income in those years.
+				</p>
+				<p style="margin:0;">
+					<strong>Please Note:</strong> This summary is not designed to provide a quote and assumes no withdrawals have been taken prior to the Income Start Date.
+				</p>
+			</div>
+		</div>
 	</div>
 	`
 	return returnHTML
@@ -658,143 +670,167 @@ function generatePDFPageTwo() {
 function generatePDFPageOne() {
 	let yearOrYears = deferred == 1 ? "year" : "years"
 	let percentOfInitial = annualIncome / initialPayment
+	let totalAnnualWithdrawals = annualIncome * (100 - ageAtIncome + 1)
 	let today = new Date()
 	let dateStr = today.getMonth() + 1 + "/" + today.getDate() + "/" + today.getFullYear()
-	let marginTop = "50px"
-	return `
-	<div id="page1content" style="margin:0; display:flex; flex-direction:column; position:absolute; top:250px; width:596px; height:531px; justify-content:center; align-items:center;">
-		<div id="deferralContainer" style="width:526px; margin:0; margin-top:40px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="deferralTitle" style="background:${accentColor}; position:absolute; top:22px; left:50px; color:white; border-radius:6px; font-size:12px; font-weight:700; padding:10px; border-bottom: 1px solid white;">
-				Income Deferral Period: ${deferred} ${yearOrYears}
+	let marginTop = "37px"
+	let titlePadding = "8px 10px 8px 10px"
+	let titleFontSize = "14px"
+	let detailsFontSize = "11px"
+	let returnStr = `
+	<div id="page1content" style="margin:0; display:flex; flex-direction:column; position:absolute; top:250px; width:596px; height:591px; justify-content:center; align-items:center;">
+		<div id="initialContainer" style="width:526px; margin:0; margin-top:50px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+			<div id="initialTitle" style="background:${accentColor}; position:absolute; top:33px; left:50px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
+				Initial Purchase Payment: <span style="font-weight:200;">${displayDollars(initialPayment)}</span>
 			</div>
-			<div id="deferralText" style="background:${greyColor}; font-size:10px; font-weight:300; padding:20px 10px 10px 10px;">
-				By deferring when you begin taking income by ${deferred} ${yearOrYears}, (Age ${getYoungestAge()} today, to age ${ageAtIncome}), your Withdrawal Benefit
-				Base will grow by a ${displayPercent(bonusRate)} Bonus Rate* for each of those years. When you start income, it will be based off a 
-				Withdrawal Benefit Base** of ${displayDollars(withdrawBase)}.
+			<div id="initialText" style="background:${greyColor}; font-size:${detailsFontSize}; width:506px; font-weight:300; padding:20px 10px 10px 10px;">
+				At issue, your Withdrawal Benefit Base<sup style="font-size:7px;">1</sup> will be equal to your Initial Purchase Payment.
 			</div>
 		</div>
 		<div id="bonusContainer" style="border-radius:5px; width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="bonusTitle" style="border-radius:6px; color:white; background:${accentColor}; position:absolute; top:135px; left:50px; font-size:12px; font-weight:700; padding:10px; border-bottom: 1px solid white;">
-				Bonus Rate: ${displayPercent(bonusRate)}
+			<div id="bonusTitle" style="border-radius:6px; color:white; background:${accentColor}; position:absolute; top:113px; left:50px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
+				Bonus Rate<sup style="font-size:9px;">2</sup>: <span style="font-weight:200;">${displayPercent(bonusRate)}</span>
 			</div>
-			<div id="bonusText" style="background:${greyColor}; font-size:10px; width:506px; font-weight:300; padding:20px 10px 10px 10px;">
-				We will calculate a bonus amount during the bonus period that may be added to the Withdrawal Benefit Base.
+			<div id="bonusText" style="background:${greyColor}; font-size:${detailsFontSize}; width:506px; font-weight:300; padding:20px 10px 10px 10px;">
+				This is the rate we use to calculate a bonus amount during the bonus period. This amount is added to the Withdrawal Benefit Base each year income is deferred. 
+				If you elect to begin lifetime income immediately, your Withdrawal Benefit Base will not be increased by a bonus amount.
+			</div>
+		</div>
+		<div id="deferralContainer" style="width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+			<div id="deferralTitle" style="background:${accentColor}; position:absolute; top:216px; left:50px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
+				Income Deferral Period: <span style="font-weight:200;">${deferred} ${yearOrYears}</span>
+			</div>
+			<div id="deferralText" style="background:${greyColor}; font-size:${detailsFontSize}; font-weight:300; padding:20px 10px 10px 10px;">
+				By deferring when you begin taking income by ${deferred} ${yearOrYears}, (Age ${getYoungestAge()} today, to age ${ageAtIncome}), your Withdrawal Benefit
+				Base will have increased to ${displayDollars(withdrawBase)}. When you start income, it will be based off this amount.
 			</div>
 		</div>
 		<div id="lifetimeContainer" style="border-radius:5px; width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="lifetimeTitle" style="top:226px; left:50px; border-radius:6px; background:${accentColor}; color:white; font-size:12px; font-weight:700; position:absolute; padding:10px; border-bottom: 1px solid white;">
-				Lifetime Withdrawal Percentage: ${displayPercent(withdrawPercent)}
+			<div id="lifetimeTitle" style="top:307px; left:50px; border-radius:6px; background:${accentColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
+				Lifetime Withdrawal Percentage<sup style="font-size:9px;">2</sup>: <span style="font-weight:200;">${displayPercent(withdrawPercent)}</span>
 			</div>
-			<div id="lifetimeText" style="background:${greyColor}; font-size:10px; font-weight:300; padding:20px 10px 10px 10px;">
+			<div id="lifetimeText" style="background:${greyColor}; font-size:${detailsFontSize}; font-weight:300; padding:20px 10px 10px 10px;">
 				This percentage is based off your age of ${ageAtIncome} at the time you start taking income. It is multiplied by the Withdrawal Benefit Base on your Income Start Date
 				to determine the amount of annual income you will receive.
 			</div>
 		</div>
 		<div id="annualContainer" style="border-radius:5px; width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="annualTitle" style="top:328px; left:50px; border-radius:6px; background:${accentColor}; color:white; font-size:12px; font-weight:700; position:absolute; padding:10px; border-bottom: 1px solid white;">
-				Annual Withdrawal Amount: ${displayDollars(annualIncome)}
+			<div id="annualTitle" style="top:410px; left:50px; border-radius:6px; background:${accentColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
+				Annual Withdrawal Amount: <span style="font-weight:200;">${displayDollars(annualIncome)}</span>
 			</div>
-			<div id="annualText" style="background:${greyColor}; font-size:10px; font-weight:300; padding:20px 10px 10px 10px;">
-				You are guaranteed to receive this amount of income for life. On an annual basis, this equates to ${displayPercent(percentOfInitial)} of your initial
-				purchase payment of ${displayDollars(initialPayment)}.
+			<div id="annualText" style="background:${greyColor}; font-size:${detailsFontSize}; font-weight:300; padding:20px 10px 10px 10px;">
+				You are guaranteed to receive this amount of annual income for life. On an annual basis, this equates to ${displayPercent(percentOfInitial)} of your initial
+				purchase payment of ${displayDollars(initialPayment)}. If you live to age 100, your total annual withdrawals 
+				will amount to ${displayDollars(totalAnnualWithdrawals)}.
 			</div>
 		</div>
-		<div id="finePrintContainer" style="font-size:8px; margin-top:auto; margin-bottom:0px;">
-			<p>*The Bonus Rate and the Lifetime Withdrawal Percentage are valid for applications signed on ${dateStr}.</p>
-			<p>**Early or excess withdrawals will reduce the Withdrawal Benefit Base and Bonus Base by the same proportion that the Account Value is reduced.</p>
-			<p>If Joint Life is elected, the covered age is based on the youngest spouse.</p>
-			<p>This material must be preceded or accompanied by a current Accelerator Prime Variable Annuity prospectus.</p>
-			<p>The prospectus can viewed by visiting <span style="color:blue;">http://connect.rightprospectus.com/DelawareLife/TAHD/246115208?&site=Annuity</span></p>
-		</div>
-	</div>
+		<div id="finePrintContainer" style="background:${greyColor}; gap:7px; padding:5px 20px 5px 20px; font-size:8px; height:60px; display:flex; flex-direction:column; justify-content:center; margin-top:auto; margin-bottom:0px;">
+			<p style="margin:0;">
+				<sup>1</sup>Early or excess withdrawals will reduce the Withdrawal Benefit Base and Bonus Base by the same proportion that the Account Value is reduced. 
+				This summary assumes that no withdrawals have been taken prior to the Income Start Date.
+			</p>
+			<p style="margin:0;"><sup>2</sup>The Bonus Rate and the Lifetime Withdrawal Percentage are valid for applications signed on ${dateStr}.</p>
 	`
-}
+	if (livesCoveredVal == 1) {
+		returnStr += `<p style="margin:0;"><strong>Please Note:</strong> When Joint Life is elected, the covered age is based on the youngest spouse.</p>`
+	}
 
-function formatPDFFooter(top, pageNum) {
-	return `
-		<div id="footer" style="width:596px; height:60px; position:absolute; top:${top}; display:flex; flex-direction:column; justify-content:center; align-items:center; font-size:6px; color:#666666; border-top:1px solid #cccccc;">
-			<p style="margin:0;">${pageNum} / 3</p>
-			<div id="logoContainer" style="display:flex; position:absolute; top:10px; left:10px;">
-				<div id="circle" style="background:#33ccaa; height:26px; width:26px; border-radius:100%; margin-top:12px;"></div>
-				<div id="rectangle" style="background:#0a0d42; height:38px; width:13px;"></div>
-			</div>
-			<div id="logoNameContainer" style="display:flex; flex-direction:column; position:absolute; top:6px; left:58px; color:${accentColor}; font-size:20px; font-weight:700;">
-				<div>
-					Delaware
-				</div>
-				<div>
-					Life<sup style="font-size:8px;"> ®</sup>
-				</div>
+	returnStr += `
 			</div>
 		</div>
 	</div>
 	`
+
+	return returnStr
 }
 
 function formatPDFSummary(top) {
 	let fontSize = "9px"
+	let logoTop = (parseInt(top.slice(0, -2)) - 95).toString() + "px"
+	let logoNameTop = (parseInt(logoTop.slice(0, -2)) - 4).toString() + "px"
 	let yearOrYears = deferred == 1 ? "year" : "years"
 	let today = new Date()
 	let dateStr = today.getMonth() + 1 + "/" + today.getDate() + "/" + today.getFullYear()
-	return `
-	<div id="bigBanner" style="margin:0; position:absolute; display:flex; flex-direction:column; width:596px; height:70px; background:${accentColor}; color:white; font-size:14px; font-weight:700; justify-content:center; align-items:center;">
-			<p style="margin:0;">Delaware Life Accelerator Prime<sup style="font-size:8px;">SM</sup> Variable Annuity</p>
-			<p style="margin:0;">Guaranteed Lifetime Withdrawal Benefit (GLWB) Income Summary</p>
+	let returnStr = `
+	<div id="bigBanner" style="margin:0; position:absolute; display:flex; flex-direction:column; width:596px; height:110px; background:${accentColor}; color:white; font-size:14px; font-weight:700;">
+		<p style="margin:65px 0 0 15px; font-weight:200;">Delaware Life Accelerator Prime<sup style="font-size:8px;">SM</sup> Variable Annuity</p>
+		<p style="margin:0 0 0 15px;">Guaranteed Lifetime Withdrawal Benefit (GLWB) Income Summary</p>
+	</div>
+	<div id="logoContainer" style="display:flex; position:absolute; top:${logoTop}; left:15px;">
+		<div id="circle" style="background:white; height:26px; width:26px; border-radius:100%; margin-top:12px;"></div>
+		<div id="rectangle" style="background:${accentColorLight}; height:38px; width:13px;"></div>
+	</div>
+	<div id="logoNameContainer" style="display:flex; flex-direction:column; position:absolute; top:${logoNameTop}; left:63px; color:white; font-size:20px; font-weight:700;">
+		<div>
+			Delaware
 		</div>
-		<div id="summaryBoxContainer" style="position:absolute; top:${top}; margin:10px; display:flex; justify-content:center; width:556px; height: 140px; padding:10px; background:${greyColor};">
-			<div id="summaryTitle" style="position: absolute; top:20px; left:20px; font-size:12px; font-weight:700;">
-				Summary
+		<div>
+			Life<sup style="font-size:8px;"> ®</sup>
+		</div>
+	</div>
+	<div id="summaryBoxContainer" style="position:absolute; top:${top}; margin:10px; display:flex; justify-content:center; width:556px; height: 120px; padding:10px; background:${greyColor};">
+		<div id="summaryTitle" style="position: absolute; top:17px; left:20px; font-size:13px; font-weight:700;">
+			Summary
+		</div>
+		<div id="third1" style="display:flex; flex-direction:column; margin-right:30px; justify-content:center;">
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">GLWB/Lives Covered: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${createGlwbAndLivesCoveredString()}</p>
 			</div>
-			<div id="third1" style="display:flex; flex-direction:column; margin-right:30px; justify-content:center;">
-				<div>
-					<p style="font-size:${fontSize}; font-weight:700; display:inline;">GLWB/Lives Covered: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${createGlwbAndLivesCoveredString()}</p>
-				</div>
-				<div>
-					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Initial Purchase Payment: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${displayDollars(initialPayment)}</p>
-				</div>
-				<div>
-					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Annual Withdrawal Amount: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${displayDollars(annualIncome)}</p>
-				</div>
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Initial Purchase Payment: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${displayDollars(initialPayment)}</p>
 			</div>
-			<div id="third2" style="display:flex; flex-direction:column; margin-right:30px; justify-content:center;">
-				<div>
-					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Today's Date: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${dateStr}</p>					
-				</div>
-				<div>
-					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Bonus Rate: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${displayPercent(bonusRate)}</p>					
-				</div>
-				<div>
-					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Income Deferral Period: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${deferred} ${yearOrYears}</p>					
-				</div>
-				<div>
-					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Lifetime Withdrawal Percentage: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${displayPercent(withdrawPercent)}</p>					
-				</div>
-			</div>
-			<div id="third3" style="display:flex; flex-direction:column; justify-content:center;">
-				<div>
-					<p style="font-size:${fontSize}; font-weight:700; display:inline;">State: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${stateVal}</p>					
-				</div>
-				<div>
-					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Current Age: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${currentAgeVal}</p>					
-				</div>
-				<div>
-					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Spouse Age: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${livesCoveredVal == 0 ? "N/A" : spouseAgeVal}</p>					
-				</div>
-				<div>
-					<p style="font-size:${fontSize}; font-weight:700; display:inline;">Age at Income Start: </p>
-					<p style="font-size:${fontSize}; font-weight:200; display:inline;">${ageAtIncome}</p>					
-				</div>
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Annual Withdrawal Amount: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${displayDollars(annualIncome)}</p>
 			</div>
 		</div>
+		<div id="third2" style="display:flex; flex-direction:column; margin-right:30px; justify-content:center;">
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Today's Date: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${dateStr}</p>					
+			</div>
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Bonus Rate: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${displayPercent(bonusRate)}</p>					
+			</div>
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Income Deferral Period: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${deferred} ${yearOrYears}</p>					
+			</div>
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Lifetime Withdrawal Percentage: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${displayPercent(withdrawPercent)}</p>					
+			</div>
+		</div>
+		<div id="third3" style="display:flex; flex-direction:column; justify-content:center;">
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">State: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${stateVal}</p>					
+			</div>
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Current Age: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${currentAgeVal}</p>					
+			</div>
 	`
+	if (livesCoveredVal == 1) {
+		returnStr += `
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Spouse's Age: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${spouseAgeVal}</p>					
+			</div>
+		`
+	}
+
+	returnStr += `
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Age at Income Start: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${ageAtIncome}</p>					
+			</div>
+		</div>
+	</div>
+	`
+
+	return returnStr
 }
