@@ -116,59 +116,122 @@ function storeUserInput() {
 	deferred = parseInt(yearsDeferred.value)
 }
 
-function createActualSummaryTableHTML() {
-	let returnHTML = `<table style="border-collapse: collapse;">
+function createActualSummaryTableHTML(forPDF = false) {
+	let pdfPadding = deferred > 10 ? "8px" : "12px"
+	if (deferred < 6) {
+		pdfPadding = "14px"
+	}
+	let returnHTML = `<table style="${forPDF ? "font-size:11px; " : ""}border-collapse: collapse;">`
+	if (forPDF) {
+		returnHTML += `
+		<colgroup>
+			<col span="5" style="width:110px;"></col>
+ 		</colgroup>
+		`
+	}
+	returnHTML += `
 	<tr>
-	  <th>Year</th>
-	  <th>Age</th>
-	  <th>Withdrawal Benefit Base</th>
-	  <th>Annual Withdrawal Amount</th>
-	  <th>Lifetime Withdrawal Percentage</th>
+	  <th${forPDF ? ' style="border-right: 2px solid white; padding:10px; color:white; background:' + accentColor + '; border-radius:5px 0 0 0;"' : ""}>Year</th>
+	  <th${forPDF ? ' style="border-right: 2px solid white; padding:10px; color:white; background:' + accentColor + ';"' : ""}>Age</th>
+	  <th${forPDF ? ' style="border-right: 2px solid white; padding:10px; color:white; background:' + accentColor + ';"' : ""}>Withdrawal Benefit Base</th>
+	  <th${forPDF ? ' style="border-right: 2px solid white; padding:10px; color:white; background:' + accentColor + ';"' : ""}>Annual Withdrawal Amount</th>
+	  <th${forPDF ? ' style="padding:10px; color:white; background:' + accentColor + '; border-radius:0 5px 0 0;"' : ""}>Lifetime Withdrawal Percentage</th>
 	</tr>
 	`
 
 	let counter = 0
+	let evenOddCounter = 0
 	let rowHighlighted = false
-	let currentRowHighlighted = false
 	for (let row of benefitTable) {
-		if (counter < 11 && !rowHighlighted) {
-			currentRowHighlighted = false
+		if (!rowHighlighted) {
 			let wPercent = "-"
 			let bBase = Math.round(row[1])
 			let currentAgeDisplayed = getYoungestAge() + counter
 
-			if (currentAgeDisplayed > 54) {
+			if (counter > 9 && deferred > 10) {
+				let groupYoungAge = getYoungestAge() + counter
+				let groupOldAge = groupYoungAge
+				let prevWPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
+				let yearLow = counter
 				wPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
-			}
-			if (ageAtIncome == getYoungestAge() + counter || (!rowHighlighted && counter == 10)) {
-				returnHTML += "<tr style='background:#F4B860;'>"
-				rowHighlighted = true
-				currentRowHighlighted = true
+				do {
+					if (getYoungestAge() + counter < 100) {
+						counter++
+						groupOldAge++
+						prevWPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
+					} else {
+						break
+					}
+				} while (groupOldAge < 100 && prevWPercent == withdrawMap.get(getYoungestAge() + counter + 1)[glwbVal + livesCoveredVal])
+				if (ageAtIncome <= getYoungestAge() + counter) {
+					returnHTML += "<tr style='background:#F4B860;'>"
+					rowHighlighted = true
+				} else if (forPDF && evenOddCounter % 2 == 0) {
+					returnHTML += `<tr style='background:${greyColor};'>`
+				} else {
+					returnHTML += "<tr>"
+				}
+				if (forPDF) {
+					returnHTML += `
+						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${yearLow + " - " + counter}</td>
+						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${groupYoungAge + " - " + groupOldAge}</td>
+						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayDollars(bBase)}</td>
+						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayDollars(bBase * wPercent)}</td>
+						<td style="text-align:center; padding:${pdfPadding};">${displayPercent(wPercent)}</td>
+					</tr>
+					`
+				} else {
+					returnHTML += `
+						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${yearLow + " - " + counter}</td>
+						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${groupYoungAge + " - " + groupOldAge}</td>
+						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${displayDollars(bBase)}</td>
+						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${displayDollars(bBase * wPercent)}</td>
+						<td>${displayPercent(wPercent)}</td>
+					</tr>
+					`
+				}
 			} else {
-				returnHTML += "<tr>"
+				if (currentAgeDisplayed > 54) {
+					wPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
+				}
+				if (ageAtIncome == getYoungestAge() + counter) {
+					returnHTML += "<tr style='background:#F4B860;'>"
+					rowHighlighted = true
+				} else if (forPDF && evenOddCounter % 2 == 0) {
+					returnHTML += `<tr style='background:${greyColor};'>`
+				} else {
+					returnHTML += "<tr>"
+				}
+				if (forPDF) {
+					returnHTML += `
+						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${row[0]}</td>
+						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${currentAgeDisplayed}</td>
+						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayDollars(bBase)}</td>
+						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${wPercent == "-" ? "-" : displayDollars(bBase * wPercent)}</td>
+						<td style="text-align:center; padding:${pdfPadding};">${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
+					</tr>
+					`
+				} else {
+					returnHTML += `
+						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${row[0]}</td>
+						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${currentAgeDisplayed}</td>
+						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${displayDollars(bBase)}</td>
+						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${wPercent == "-" ? "-" : displayDollars(bBase * wPercent)}</td>
+						<td>${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
+					</tr>
+					`
+				}
 			}
-			if (currentRowHighlighted) {
-				returnHTML += `
-				<td style="border-right: 2px solid #F4B860;">${row[0]}</td>
-				<td style="border-right: 2px solid #F4B860;">${currentAgeDisplayed}</td>
-				<td style="border-right: 2px solid #F4B860;">${displayDollars(bBase)}</td>
-				<td style="border-right: 2px solid #F4B860;">${wPercent == "-" ? "-" : displayDollars(bBase * wPercent)}</td>
-				<td>${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
-			</tr>
-			`
+
+			evenOddCounter++
+			if (getYoungestAge() + counter < 100) {
+				counter++
 			} else {
-				returnHTML += `
-				<td>${row[0]}</td>
-				<td>${currentAgeDisplayed}</td>
-				<td>${displayDollars(bBase)}</td>
-				<td>${wPercent == "-" ? "-" : displayDollars(bBase * wPercent)}</td>
-				<td>${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
-			</tr>
-			`
+				break
 			}
 		}
-		counter++
 	}
+	returnHTML += "</table>"
 
 	return returnHTML
 }
@@ -606,50 +669,9 @@ function generatePDFPageTwo() {
 	let returnHTML = `
 	<div id="page2content" style="margin:0; display:flex; flex-direction:column; position:absolute; top:1101px; width:596px; height:583px; justify-content:center; align-items:center;">
 		<div id="tableContainer" style="height:523px; padding:auto; display:flex; align-items:center;">
-		<table style="font-size:11px; border-collapse: collapse">
-			<colgroup>
-				<col span="5" style="width:110px;"></col>
-			</colgroup>
-			<tr>
-				<th style="border-right: 2px solid white; padding:10px; color:white; background:${accentColor}; border-radius:5px 0 0 0;">Year</th>
-				<th style="border-right: 2px solid white; padding:10px; color:white; background:${accentColor};">Age</th>
-				<th style="border-right: 2px solid white; padding:10px; color:white; background:${accentColor};">Withdrawal Benefit Base</th>
-				<th style="border-right: 2px solid white; padding:10px; color:white; background:${accentColor};">Annual Withdrawal Amount</th>
-				<th style="padding:10px; color:white; background:${accentColor}; border-radius:0 5px 0 0;">Lifetime Withdrawal Percent</th>
-			</tr>
 	`
-	let counter = 0
-	let rowHighlighted = false
-	for (let row of benefitTable) {
-		if (counter < 11 && !rowHighlighted) {
-			let wPercent = "-"
-			let bBase = Math.round(row[1])
-			let currentAgeDisplayed = getYoungestAge() + counter
-
-			if (currentAgeDisplayed > 54) {
-				wPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
-			}
-			if (ageAtIncome == getYoungestAge() + counter || (!rowHighlighted && counter == 10)) {
-				returnHTML += "<tr style='background:#F4B860;'>"
-				rowHighlighted = true
-			} else if (counter % 2 == 0) {
-				returnHTML += `<tr style='background:${greyColor};'>`
-			} else {
-				returnHTML += "<tr>"
-			}
-			returnHTML += `
-				<td style="text-align:center; padding:12px; border-right: 2px solid white;">${row[0]}</td>
-				<td style="text-align:center; padding:12px; border-right: 2px solid white;">${currentAgeDisplayed}</td>
-				<td style="text-align:center; padding:12px; border-right: 2px solid white;">${displayDollars(bBase)}</td>
-				<td style="text-align:center; padding:12px; border-right: 2px solid white;">${wPercent == "-" ? "-" : displayDollars(bBase * wPercent)}</td>
-				<td style="text-align:center; padding:12px;">${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
-			</tr>
-			`
-		}
-		counter++
-	}
+	returnHTML += createActualSummaryTableHTML(true)
 	returnHTML += `
-			</table>
 			</div>
 			<div id="finePrintContainer" style="background:${greyColor}; gap:7px; padding:5px 20px 5px 20px; font-size:8px; height:60px; display:flex; flex-direction:column; justify-content:center; margin-top:auto; margin-bottom:0px;">
 				<p style="margin:0;">
