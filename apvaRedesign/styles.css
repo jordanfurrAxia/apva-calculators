@@ -200,16 +200,16 @@ body {
 .j-actual-summary-table th {
 	background: var(--apva-accent-color);
 	color: white;
-	max-width: 200px;
+	max-width: 170px;
 	min-width: 50px;
 	font-weight: 700;
-	padding: 5px;
+	padding: 5px 8px 5px 8px;
 }
 
 .j-actual-summary-table td {
 	text-align: center;
 	white-space: nowrap;
-	padding: 4px 8px 4px 8px;
+	padding: 6px 8px 6px 8px;
 	margin: 0 8px 0 8px;
 }
 .j-actual-summary-table td:not(:last-child) {
