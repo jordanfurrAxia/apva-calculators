@@ -117,11 +117,8 @@ function storeUserInput() {
 }
 
 function createActualSummaryTableHTML(forPDF = false) {
-	let pdfPadding = deferred > 10 ? "8px" : "12px"
-	if (deferred < 6) {
-		pdfPadding = "14px"
-	}
-	let returnHTML = `<table style="${forPDF ? "font-size:11px; " : ""}border-collapse: collapse;">`
+	let pdfPadding = "8px"
+	let returnHTML = `<table style="${forPDF ? "font-size:11px;" : ""}border-collapse: collapse;">`
 	if (forPDF) {
 		returnHTML += `
 		<colgroup>
@@ -131,8 +128,8 @@ function createActualSummaryTableHTML(forPDF = false) {
 	}
 	returnHTML += `
 	<tr>
-	  <th${forPDF ? ' style="border-right: 2px solid white; padding:10px; color:white; background:' + accentColor + '; border-radius:5px 0 0 0;"' : ""}>Year</th>
-	  <th${forPDF ? ' style="border-right: 2px solid white; padding:10px; color:white; background:' + accentColor + ';"' : ""}>Age</th>
+	  <th${forPDF ? ' style="border-right: 2px solid white; padding:10px; color:white; background:' + accentColor + '; border-radius:5px 0 0 0;"' : ""}>Years Deferred</th>
+	  <th${forPDF ? ' style="border-right: 2px solid white; padding:10px; color:white; background:' + accentColor + ';"' : ""}>Age at Income Start</th>
 	  <th${forPDF ? ' style="border-right: 2px solid white; padding:10px; color:white; background:' + accentColor + ';"' : ""}>Withdrawal Benefit Base</th>
 	  <th${forPDF ? ' style="border-right: 2px solid white; padding:10px; color:white; background:' + accentColor + ';"' : ""}>Annual Withdrawal Amount</th>
 	  <th${forPDF ? ' style="padding:10px; color:white; background:' + accentColor + '; border-radius:0 5px 0 0;"' : ""}>Lifetime Withdrawal Percentage</th>
@@ -585,17 +582,22 @@ function generatePDFPageThree() {
 	let fontSize = "9px"
 	let marginBottom = "0px"
 	return `
-	<div id="page3content" style="margin:0; padding:20px; display:flex; flex-direction:column; position:absolute; top:1684px; width:556px; height:741px;">
+	<div id="page3content" style="margin:0; padding:20px; display:flex; flex-direction:column; position:absolute; top:1674px; width:556px; height:831px;">
 		<p id="page3title" style="font-size:14px; font-weight:700; margin-bottom:20px;">
 			Important disclosures
 		</p>
+		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:700;">
+			You should carefully consider a variable annuity's risks, charges, limitations, and investment goals of underlying investment options and read all 
+			prospectuses prior to making any investment decisions or sending money for your clients. This and other information is available in the product prospectus, 
+			as well as the underlying investment option prospectuses. Prospectuses are available from your annuity wholesaler or by calling 844.DEL.SALE (844.335.7253).
+		</p>
 		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
-			Withdrawals of taxable amounts are subject to ordinary income tax and, if made before age 59½, may be subject to a 10% federal income tax penalty. 
-			Distributions of taxable amounts from a non-qualified annuity may also be subject to an additional 3.8% federal tax on net investment income. 
-			Withdrawals will reduce the contract value and may reduce the living and death benefits and any optional riders. Withdrawals may be subject to withdrawal charges. 
-			Under current law, a non-qualified annuity that is owned by an individual is generally entitled to tax deferral. IRAs and qualified plans—such as 401(k)s and 403(b)s—are 
-			already tax-deferred. Therefore, a deferred annuity should only be used to fund an IRA or qualified plan to benefit from the annuity's features other than tax deferral. 
-			These include lifetime income, death benefit options, and the ability to transfer among investment options without sales or withdrawal charges. 
+		Withdrawals of taxable amounts are subject to ordinary income tax and, if made before age 59½, may be subject to a 10% federal income tax penalty. 
+		Distributions of taxable amounts from a non-qualified annuity may also be subject to an additional 3.8% federal tax on net investment income. 
+		Withdrawals will reduce the contract value and may reduce the living and death benefits and any optional riders. Withdrawals may be subject to withdrawal charges. 
+		Under current law, a non-qualified annuity that is owned by an individual is generally entitled to tax deferral. IRAs and qualified plans—such as 401(k)s and 
+		403(b)s—are already tax-deferred. Therefore, a deferred annuity should only be used to fund an IRA or qualified plan to benefit from the annuity's features other 
+		than tax deferral. These include lifetime income, death benefit options, and the ability to transfer among investment options without sales or withdrawal charges.
 		</p>
 		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
 			Products, riders, and features may vary by state, may not be available in all states, and their numbers may vary by state. 
@@ -606,7 +608,7 @@ function generatePDFPageThree() {
 			Clients should refer to their tax advisor for advice about their specific situation.
 		</p>
 		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
-			The Accelerator Prime<sup style="font-size:6px;">SM</sup> Variable Annuity is issued by Delaware Life Insurance Company and distributed by its affiliated broker-dealer, 
+			The Accelerator Prime Variable Annuity is issued by Delaware Life Insurance Company and distributed by its affiliated broker-dealer, 
 			Clarendon Insurance Agency, Inc. (member FINRA). Both companies are members of Group One Thousand One, LLC (Group1001).
 		</p>
 		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
@@ -622,18 +624,8 @@ function generatePDFPageThree() {
 			All product guarantees, including optional living and death benefits, are subject to the claims-paying ability and financial strength of the issuing 
 			insurance company, and do not protect the value of underlying investment fund options within a variable annuity, which are subject to risk.
 		</p>
-		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:700;">
-			You should carefully consider a variable annuity's risks, charges, limitations, and investment goals of underlying investment options and read all prospectuses 
-			prior to making any investment decisions or sending money for your clients. This and other information is available in the product prospectus, as well as the 
-			underlying investment option prospectuses. Prospectuses are available from your annuity wholesaler or by calling 844.DEL.SALE (844.335.7253).
-		</p>
 		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
-			Under current law, a nonqualified annuity that is owned by an individual is generally entitled to tax deferral. IRAs and qualified plans—such as 401(k)s and 
-			403(b)s—are already tax deferred. Therefore, a deferred annuity should be used to fund an IRA or qualified plan only to benefit from the annuity's features 
-			other than tax deferral. These include lifetime income, death benefit options, and the ability to transfer among investment fund options without sales or withdrawal charges.
-		</p>
-		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
-			The Income Boost<sup style="font-size:6px;">SM</sup> GLWB fee (1.50%) and Income Control<sup style="font-size:6px;">SM</sup> GLWB fee (1.35%) are calculated based 
+			The Income Boost GLWB fee (1.50%) and Income Control GLWB fee (1.35%) are calculated based 
 			on the withdrawal benefit base, charged at the end of each quarter, and deducted proportionately from the contract value. The rider fee percentage could be 
 			increased as a result of a step-up. Delaware Life will notify you in advance, 
 			and you can elect not to receive the step-up. The GLWB fee will never be greater than the set maximum GLWB fee.
@@ -654,13 +646,23 @@ function generatePDFPageThree() {
 			based on the youngest spouse's age at the time of the first withdrawal after age 55.
 		</p>
 		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
-			<b>Bonus Rate:</b> The GLWB provides a Bonus Rate that may be used in determining increases to the Withdrawal Benefit Base during the Bonus Period. 
+			The <b>Bonus Rate:</b> The GLWB provides a Bonus Rate that may be used in determining increases to the Withdrawal Benefit Base during the Bonus Period. 
 			The Bonus Period is in effect until the earlier of the Income Start Date or 10 years from issue.
 		</p>
 		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
 			Please see the prospectus for a more complete description of the benefits and limitations of the GLWB.
 		</p>
+		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
+			This material is approved for use between an advisor and their client or prospect. It should not be distributed to the general public.
+		</p>
+		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
+			XXXXXXXXX XX/XX/XXXX
+		</p>
+		<p style="font-size:8px; margin-bottom:0; margin-top:auto; padding-bottom:10px; align-self:center; color:#444444;">
+			Page 3/3
+		</p>
 	</div>
+	
 	</div>
 	`
 }
@@ -668,12 +670,12 @@ function generatePDFPageThree() {
 function generatePDFPageTwo() {
 	let returnHTML = `
 	<div id="page2content" style="margin:0; display:flex; flex-direction:column; position:absolute; top:1101px; width:596px; height:583px; justify-content:center; align-items:center;">
-		<div id="tableContainer" style="height:523px; padding:auto; display:flex; align-items:center;">
+		<div id="tableContainer" style="padding:20px 0 20px 0;">
 	`
 	returnHTML += createActualSummaryTableHTML(true)
 	returnHTML += `
 			</div>
-			<div id="finePrintContainer" style="background:${greyColor}; gap:7px; padding:5px 20px 5px 20px; font-size:8px; height:60px; display:flex; flex-direction:column; justify-content:center; margin-top:auto; margin-bottom:0px;">
+			<div id="finePrintContainer" style="gap:7px; padding:0 24px 0 24px; font-size:8px; display:flex; flex-direction:column; justify-content:center; margin:0 0 auto 0;">
 				<p style="margin:0;">
 					The row highlighted in orange represents the year income is turned on based on the client information provided. These values correspond with the 
 					values used on the previous page. Rows that are not highlighted in orange represent the annual income amount that would be guaranteed if the client 
@@ -682,7 +684,12 @@ function generatePDFPageTwo() {
 				<p style="margin:0;">
 					<strong>Please Note:</strong> This summary is not designed to provide a quote and assumes no withdrawals have been taken prior to the Income Start Date.
 				</p>
+				
 			</div>
+			<p style="font-size:8px; margin:10px; align-self:center; color:#444444;">
+				Page 2/3
+			</p>
+			
 		</div>
 	</div>
 	`
@@ -702,51 +709,52 @@ function generatePDFPageOne() {
 	let returnStr = `
 	<div id="page1content" style="margin:0; display:flex; flex-direction:column; position:absolute; top:250px; width:596px; height:591px; justify-content:center; align-items:center;">
 		<div id="initialContainer" style="width:526px; margin:0; margin-top:50px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="initialTitle" style="background:${accentColor}; position:absolute; top:33px; left:50px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
+			<div id="initialTitle" style="background:${accentColor}; position:absolute; top:33px; left:30px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Initial Purchase Payment: <span style="font-weight:200;">${displayDollars(initialPayment)}</span>
 			</div>
-			<div id="initialText" style="background:${greyColor}; font-size:${detailsFontSize}; width:506px; font-weight:300; padding:20px 10px 10px 10px;">
+			<div id="initialText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
 				At issue, your Withdrawal Benefit Base<sup style="font-size:7px;">1</sup> will be equal to your Initial Purchase Payment.
 			</div>
 		</div>
 		<div id="bonusContainer" style="border-radius:5px; width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="bonusTitle" style="border-radius:6px; color:white; background:${accentColor}; position:absolute; top:113px; left:50px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
+			<div id="bonusTitle" style="border-radius:6px; color:white; background:${accentColor}; position:absolute; top:113px; left:30px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Bonus Rate<sup style="font-size:9px;">2</sup>: <span style="font-weight:200;">${displayPercent(bonusRate)}</span>
 			</div>
-			<div id="bonusText" style="background:${greyColor}; font-size:${detailsFontSize}; width:506px; font-weight:300; padding:20px 10px 10px 10px;">
+			<div id="bonusText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
 				This is the rate we use to calculate a bonus amount during the bonus period. This amount is added to the Withdrawal Benefit Base each year income is deferred. 
 				If you elect to begin lifetime income immediately, your Withdrawal Benefit Base will not be increased by a bonus amount.
 			</div>
 		</div>
 		<div id="deferralContainer" style="width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="deferralTitle" style="background:${accentColor}; position:absolute; top:216px; left:50px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
+			<div id="deferralTitle" style="background:${accentColor}; position:absolute; top:216px; left:30px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Income Deferral Period: <span style="font-weight:200;">${deferred} ${yearOrYears}</span>
 			</div>
-			<div id="deferralText" style="background:${greyColor}; font-size:${detailsFontSize}; font-weight:300; padding:20px 10px 10px 10px;">
-				By deferring when you begin taking income by ${deferred} ${yearOrYears}, (Age ${getYoungestAge()} today, to age ${ageAtIncome}), your Withdrawal Benefit
-				Base will have increased to ${displayDollars(withdrawBase)}. When you start income, it will be based off this amount.
+			<div id="deferralText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
+				By deferring when you begin taking income by <strong>${deferred} ${yearOrYears}</strong>, (Age <strong>${getYoungestAge()}</strong> today, 
+				to age <strong>${ageAtIncome}</strong>), your Withdrawal Benefit Base will have increased to <strong>${displayDollars(withdrawBase)}</strong>. 
+				When you start income, it will be based off this amount.
 			</div>
 		</div>
 		<div id="lifetimeContainer" style="border-radius:5px; width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="lifetimeTitle" style="top:307px; left:50px; border-radius:6px; background:${accentColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
+			<div id="lifetimeTitle" style="top:307px; left:30px; border-radius:6px; background:${accentColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Lifetime Withdrawal Percentage<sup style="font-size:9px;">2</sup>: <span style="font-weight:200;">${displayPercent(withdrawPercent)}</span>
 			</div>
-			<div id="lifetimeText" style="background:${greyColor}; font-size:${detailsFontSize}; font-weight:300; padding:20px 10px 10px 10px;">
-				This percentage is based off your age of ${ageAtIncome} at the time you start taking income. It is multiplied by the Withdrawal Benefit Base on your Income Start Date
-				to determine the amount of annual income you will receive.
+			<div id="lifetimeText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
+				This percentage is based off your age of <strong>${ageAtIncome}</strong> at the time you start taking income. It is multiplied by the 
+				Withdrawal Benefit Base on your Income Start Date to determine the amount of annual income you will receive.
 			</div>
 		</div>
 		<div id="annualContainer" style="border-radius:5px; width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="annualTitle" style="top:410px; left:50px; border-radius:6px; background:${accentColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
+			<div id="annualTitle" style="top:398px; left:30px; border-radius:6px; background:${accentColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Annual Withdrawal Amount: <span style="font-weight:200;">${displayDollars(annualIncome)}</span>
 			</div>
-			<div id="annualText" style="background:${greyColor}; font-size:${detailsFontSize}; font-weight:300; padding:20px 10px 10px 10px;">
-				You are guaranteed to receive this amount of annual income for life. On an annual basis, this equates to ${displayPercent(percentOfInitial)} of your initial
-				purchase payment of ${displayDollars(initialPayment)}. If you live to age 100, your total annual withdrawals 
-				will amount to ${displayDollars(totalAnnualWithdrawals)}.
+			<div id="annualText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px;margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
+				You are guaranteed to receive this amount of annual income for life. On an annual basis, this equates to <strong>${displayPercent(percentOfInitial)}</strong> 
+				of an initial purchase payment of <strong>${displayDollars(initialPayment)}</strong>. If you live to age 100, your total annual 
+				withdrawals will amount to <strong>${displayDollars(totalAnnualWithdrawals)}</strong>.
 			</div>
 		</div>
-		<div id="finePrintContainer" style="background:${greyColor}; gap:7px; padding:5px 20px 5px 20px; font-size:8px; height:60px; display:flex; flex-direction:column; justify-content:center; margin-top:auto; margin-bottom:0px;">
+		<div id="finePrintContainer" style="gap:7px; padding:0 20px 0 20px; font-size:8px; display:flex; flex-direction:column; justify-content:center; margin-top:auto; margin-bottom:0px;">
 			<p style="margin:0;">
 				<sup>1</sup>Early or excess withdrawals will reduce the Withdrawal Benefit Base and Bonus Base by the same proportion that the Account Value is reduced. 
 				This summary assumes that no withdrawals have been taken prior to the Income Start Date.
@@ -759,6 +767,9 @@ function generatePDFPageOne() {
 
 	returnStr += `
 			</div>
+			<p style="font-size:8px; margin:10px; align-self:center; color:#444444;">
+				Page 1/3
+			</p>
 		</div>
 	</div>
 	`
@@ -791,10 +802,14 @@ function formatPDFSummary(top) {
 		</div>
 	</div>
 	<div id="summaryBoxContainer" style="position:absolute; top:${top}; margin:10px; display:flex; justify-content:center; width:556px; height: 120px; padding:10px; background:${greyColor};">
-		<div id="summaryTitle" style="position: absolute; top:17px; left:20px; font-size:13px; font-weight:700;">
+		<div id="summaryTitle" style="position: absolute; top:12px; left:20px; font-size:13px; font-weight:700;">
 			Summary
 		</div>
 		<div id="third1" style="display:flex; flex-direction:column; margin-right:30px; justify-content:center;">
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Today's Date: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${dateStr}</p>					
+			</div>
 			<div>
 				<p style="font-size:${fontSize}; font-weight:700; display:inline;">GLWB/Lives Covered: </p>
 				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${createGlwbAndLivesCoveredString()}</p>
@@ -810,8 +825,8 @@ function formatPDFSummary(top) {
 		</div>
 		<div id="third2" style="display:flex; flex-direction:column; margin-right:30px; justify-content:center;">
 			<div>
-				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Today's Date: </p>
-				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${dateStr}</p>					
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">State: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${stateVal}</p>					
 			</div>
 			<div>
 				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Bonus Rate: </p>
@@ -828,8 +843,11 @@ function formatPDFSummary(top) {
 		</div>
 		<div id="third3" style="display:flex; flex-direction:column; justify-content:center;">
 			<div>
-				<p style="font-size:${fontSize}; font-weight:700; display:inline;">State: </p>
-				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${stateVal}</p>					
+				<p style="font-size:${fontSize}; font-weight:700; display:inline; color:${greyColor};">A</p>
+			</div>
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Age at Income Start: </p>
+				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${ageAtIncome}</p>					
 			</div>
 			<div>
 				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Current Age: </p>
@@ -843,13 +861,15 @@ function formatPDFSummary(top) {
 				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${spouseAgeVal}</p>					
 			</div>
 		`
+	} else {
+		returnStr += `
+			<div>
+				<p style="font-size:${fontSize}; font-weight:700; display:inline; color:${greyColor};">A</p>
+			</div>
+		`
 	}
 
 	returnStr += `
-			<div>
-				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Age at Income Start: </p>
-				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${ageAtIncome}</p>					
-			</div>
 		</div>
 	</div>
 	`
