@@ -24,6 +24,8 @@ let pdfDiv = document.getElementById("pdf")
 let accentColor = "#00463b" // DL APVA green
 let accentColorLight = "#00b89c"
 let greyColor = "#e6e9ed"
+let blueColor = "#007bc2"
+let lightBlueColor = "#c2dceb"
 
 addEventListeners()
 
@@ -163,29 +165,30 @@ function createActualSummaryTableHTML(forPDF = false) {
                     }
                 } while (groupOldAge < 100 && prevWPercent == withdrawMap.get(getYoungestAge() + counter + 1)[glwbVal + livesCoveredVal])
                 if (ageAtIncome <= getYoungestAge() + counter) {
-                    returnHTML += "<tr style='background:#F4B860;'>"
+                    returnHTML += `<tr style='background:${blueColor};'>`
                     rowHighlighted = true
                 } else if (forPDF && evenOddCounter % 2 == 0) {
                     returnHTML += `<tr style='background:${greyColor};'>`
                 } else {
                     returnHTML += "<tr>"
                 }
+                let displayAsSingleYear = yearLow - (counter - (groupOldAge - ageAtIncome)) == 0
                 if (forPDF) {
                     returnHTML += `
-						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${yearLow + " - " + counter}</td>
-						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${groupYoungAge + " - " + groupOldAge}</td>
-						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayDollars(bBase)}</td>
-						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayDollars(bBase * wPercent)}</td>
-						<td style="text-align:center; padding:${pdfPadding};">${displayPercent(wPercent)}</td>
+						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayAsSingleYear ? yearLow : yearLow + " - " + (counter - (groupOldAge - ageAtIncome))}</td>
+						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayAsSingleYear ? groupYoungAge : groupYoungAge + " - " + Math.min(groupOldAge, ageAtIncome)}</td>
+						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayDollars(bBase)}</td>
+						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayDollars(bBase * wPercent)}</td>
+						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding};">${displayPercent(wPercent)}</td>
 					</tr>
 					`
                 } else {
                     returnHTML += `
-						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${yearLow + " - " + counter}</td>
-						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${groupYoungAge + " - " + groupOldAge}</td>
-						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${displayDollars(bBase)}</td>
-						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${displayDollars(bBase * wPercent)}</td>
-						<td>${displayPercent(wPercent)}</td>
+						<td${rowHighlighted ? ' style="color:white; style="border-right: 2px solid white;"' : ""}>${displayAsSingleYear ? yearLow : yearLow + " - " + (counter - (groupOldAge - ageAtIncome))}</td>
+						<td${rowHighlighted ? ' style="color:white; style="border-right: 2px solid white;"' : ""}>${displayAsSingleYear ? groupYoungAge : groupYoungAge + " - " + Math.min(groupOldAge, ageAtIncome)}</td>
+						<td${rowHighlighted ? ' style="color:white; style="border-right: 2px solid white;"' : ""}>${displayDollars(bBase)}</td>
+						<td${rowHighlighted ? ' style="color:white; style="border-right: 2px solid white;"' : ""}>${displayDollars(bBase * wPercent)}</td>
+						<td${rowHighlighted ? ' style="color:white;"' : ""}>${displayPercent(wPercent)}</td>
 					</tr>
 					`
                 }
@@ -194,7 +197,7 @@ function createActualSummaryTableHTML(forPDF = false) {
                     wPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
                 }
                 if (ageAtIncome == getYoungestAge() + counter) {
-                    returnHTML += "<tr style='background:#F4B860;'>"
+                    returnHTML += `<tr style='background:${blueColor};'>`
                     rowHighlighted = true
                 } else if (forPDF && evenOddCounter % 2 == 0) {
                     returnHTML += `<tr style='background:${greyColor};'>`
@@ -203,20 +206,20 @@ function createActualSummaryTableHTML(forPDF = false) {
                 }
                 if (forPDF) {
                     returnHTML += `
-						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${row[0]}</td>
-						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${currentAgeDisplayed}</td>
-						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayDollars(bBase)}</td>
-						<td style="text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${wPercent == "-" ? "-" : displayDollars(bBase * wPercent)}</td>
-						<td style="text-align:center; padding:${pdfPadding};">${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
+						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${row[0]}</td>
+						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${currentAgeDisplayed}</td>
+						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayDollars(bBase)}</td>
+						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${wPercent == "-" ? "-" : displayDollars(bBase * wPercent)}</td>
+						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding};">${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
 					</tr>
 					`
                 } else {
                     returnHTML += `
-						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${row[0]}</td>
-						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${currentAgeDisplayed}</td>
-						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${displayDollars(bBase)}</td>
-						<td${rowHighlighted ? ' style="border-right: 2px solid white;"' : ""}>${wPercent == "-" ? "-" : displayDollars(bBase * wPercent)}</td>
-						<td>${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
+						<td${rowHighlighted ? ' style="color:white; border-right:2px solid white;"' : ""}>${row[0]}</td>
+						<td${rowHighlighted ? ' style="color:white; border-right:2px solid white;"' : ""}>${currentAgeDisplayed}</td>
+						<td${rowHighlighted ? ' style="color:white; border-right:2px solid white;"' : ""}>${displayDollars(bBase)}</td>
+						<td${rowHighlighted ? ' style="color:white; border-right:2px solid white;"' : ""}>${wPercent == "-" ? "-" : displayDollars(bBase * wPercent)}</td>
+						<td${rowHighlighted ? ' style="color:white;"' : ""}>${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
 					</tr>
 					`
                 }
@@ -661,7 +664,7 @@ function generatePDFPageThree() {
 			This material is approved for use between an advisor and their client or prospect. It should not be distributed to the general public.
 		</p>
 		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
-			XXXXXXXXX  XX/XX/XXXX
+			2022020020 02/23
 		</p>
 		<p style="font-size:8px; margin-bottom:0; margin-top:auto; padding-bottom:10px; align-self:center; color:#444444;">
 			Page 3/3
@@ -682,8 +685,8 @@ function generatePDFPageTwo() {
 			</div>
 			<div id="finePrintContainer" style="gap:7px; padding:0 24px 0 24px; font-size:8px; display:flex; flex-direction:column; justify-content:center; margin:0 0 auto 0;">
 				<p style="margin:0;">
-					The row highlighted in orange represents the year income is turned on based on the client information provided. These values correspond with the 
-					values used on the previous page. Rows that are not highlighted in orange represent the annual income amount that would be guaranteed if the client 
+					The row highlighted in blue represents the year income is turned on based on the client information provided. These values correspond with the 
+					values used on the previous page. Rows that are not highlighted in blue represent the annual income amount that would be guaranteed if the client 
 					elected to turn on income in those years.
 				</p>
 				<p style="margin:0;">
@@ -707,14 +710,25 @@ function generatePDFPageOne() {
     let totalAnnualWithdrawals = annualIncome * (100 - ageAtIncome + 1)
     let today = new Date()
     let dateStr = today.getMonth() + 1 + "/" + today.getDate() + "/" + today.getFullYear()
-    let marginTop = "37px"
+    let marginTop = "34px"
     let titlePadding = "8px 10px 8px 10px"
     let titleFontSize = "14px"
     let detailsFontSize = "11px"
     let returnStr = `
 	<div id="page1content" style="margin:0; display:flex; flex-direction:column; position:absolute; top:250px; width:596px; height:591px; justify-content:center; align-items:center;">
-		<div id="initialContainer" style="width:526px; margin:0; margin-top:50px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="initialTitle" style="background:${accentColor}; position:absolute; top:33px; left:30px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
+		<div id="annualContainer" style="border-radius:5px; width:526px; margin:0; margin-top:40px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+			<div id="annualTitle" style="top:23px; left:30px; border-radius:6px; background:${blueColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
+				Annual Withdrawal Amount: <span style="font-weight:200;">${displayDollars(annualIncome)}</span>
+			</div>
+			<div id="annualText" style="background:${lightBlueColor}; font-size:${detailsFontSize}; width:556px;margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
+				You are guaranteed to receive this amount of annual income for life. On an annual basis, this equates to <strong>${displayPercent(percentOfInitial)}</strong> 
+				of an initial purchase payment of <strong>${displayDollars(initialPayment)}</strong>. If you live to age 100, your total annual 
+				withdrawals will amount to <strong>${displayDollars(totalAnnualWithdrawals)}</strong>.
+			</div>
+		</div>		
+		<div id="howItsDetermined" style="font-size:14px; color:black; margin-top:12px; border-bottom:1px solid black;">How it's determined</div>
+		<div id="initialContainer" style="width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+			<div id="initialTitle" style="background:${accentColor}; position:absolute; top:155px; left:30px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Initial Purchase Payment: <span style="font-weight:200;">${displayDollars(initialPayment)}</span>
 			</div>
 			<div id="initialText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
@@ -722,7 +736,7 @@ function generatePDFPageOne() {
 			</div>
 		</div>
 		<div id="bonusContainer" style="border-radius:5px; width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="bonusTitle" style="border-radius:6px; color:white; background:${accentColor}; position:absolute; top:113px; left:30px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
+			<div id="bonusTitle" style="border-radius:6px; color:white; background:${accentColor}; position:absolute; top:233px; left:30px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Bonus Rate<sup style="font-size:9px;">2</sup>: <span style="font-weight:200;">${displayPercent(bonusRate)}</span>
 			</div>
 			<div id="bonusText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
@@ -731,7 +745,7 @@ function generatePDFPageOne() {
 			</div>
 		</div>
 		<div id="deferralContainer" style="width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="deferralTitle" style="background:${accentColor}; position:absolute; top:216px; left:30px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
+			<div id="deferralTitle" style="background:${accentColor}; position:absolute; top:336px; left:30px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Income Deferral Period: <span style="font-weight:200;">${deferred} ${yearOrYears}</span>
 			</div>
 			<div id="deferralText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
@@ -741,22 +755,12 @@ function generatePDFPageOne() {
 			</div>
 		</div>
 		<div id="lifetimeContainer" style="border-radius:5px; width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="lifetimeTitle" style="top:307px; left:30px; border-radius:6px; background:${accentColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
+			<div id="lifetimeTitle" style="top:426px; left:30px; border-radius:6px; background:${accentColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Lifetime Withdrawal Percentage<sup style="font-size:9px;">2</sup>: <span style="font-weight:200;">${displayPercent(withdrawPercent)}</span>
 			</div>
 			<div id="lifetimeText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
 				This percentage is based off your age of <strong>${ageAtIncome}</strong> at the time you start taking income. It is multiplied by the 
 				Withdrawal Benefit Base on your Income Start Date to determine the amount of annual income you will receive.
-			</div>
-		</div>
-		<div id="annualContainer" style="border-radius:5px; width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="annualTitle" style="top:398px; left:30px; border-radius:6px; background:${accentColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
-				Annual Withdrawal Amount: <span style="font-weight:200;">${displayDollars(annualIncome)}</span>
-			</div>
-			<div id="annualText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px;margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
-				You are guaranteed to receive this amount of annual income for life. On an annual basis, this equates to <strong>${displayPercent(percentOfInitial)}</strong> 
-				of an initial purchase payment of <strong>${displayDollars(initialPayment)}</strong>. If you live to age 100, your total annual 
-				withdrawals will amount to <strong>${displayDollars(totalAnnualWithdrawals)}</strong>.
 			</div>
 		</div>
 		<div id="finePrintContainer" style="gap:7px; padding:0 20px 0 20px; font-size:8px; display:flex; flex-direction:column; justify-content:center; margin-top:auto; margin-bottom:0px;">
