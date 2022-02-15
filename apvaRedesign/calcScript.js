@@ -24,110 +24,113 @@ let pdfDiv = document.getElementById("pdf")
 let accentColor = "#00463b" // DL APVA green
 let accentColorLight = "#00b89c"
 let greyColor = "#e6e9ed"
-let blueColor = "#007FE0"
+let blueColor = "#007bc2"
+let lightBlueColor = "#c2dceb"
 
 addEventListeners()
 
 let stateVal = ""
 let initialPayment,
-	annualIncome,
-	withdrawBase,
-	ageAtIncome,
-	withdrawPercent,
-	bonusRate,
-	glwbVal,
-	livesCoveredVal,
-	currentAgeVal,
-	spouseAgeVal,
-	solveForVal,
-	deferred = 0
+    annualIncome,
+    withdrawBase,
+    ageAtIncome,
+    withdrawPercent,
+    bonusRate,
+    glwbVal,
+    livesCoveredVal,
+    currentAgeVal,
+    spouseAgeVal,
+    solveForVal,
+    deferred = 0
 let benefitTable = []
 
 function handleNextBtn() {
-	clearValues()
-	storeUserInput()
-	clearErrorMessages()
-	let testResults = validateInput()
+    clearValues()
+    storeUserInput()
+    clearErrorMessages()
+    let testResults = validateInput()
 
-	for (let input of testResults) {
-		if (input[0] != "v") {
-			giveWarning(testResults)
-			return
-		}
-	}
+    for (let input of testResults) {
+        if (input[0] != "v") {
+            giveWarning(testResults)
+            return
+        }
+    }
 
-	runCalculation()
+    runCalculation()
 
-	if (initialPayment > 3000000) {
-		giveWarning([["incomeOrInitialPayment", "'Annual Withdrawal Amount' too large."]])
-		return
-	}
+    if (initialPayment > 3000000) {
+        giveWarning([
+            ["incomeOrInitialPayment", "'Annual Withdrawal Amount' too large."]
+        ])
+        return
+    }
 
-	displaySummary()
+    displaySummary()
 }
 
 function runCalculation() {
-	ageAtIncome = getYoungestAge() + deferred
-	withdrawPercent = withdrawMap.get(ageAtIncome)[glwbVal + livesCoveredVal]
-	bonusRate = glwbVal == 0 ? 0.06 : 0.07
+    ageAtIncome = getYoungestAge() + deferred
+    withdrawPercent = withdrawMap.get(ageAtIncome)[glwbVal + livesCoveredVal]
+    bonusRate = glwbVal == 0 ? 0.06 : 0.07
 
-	if (solveForVal == "annual") {
-		populateBenefitTable()
-		withdrawBase = benefitTable[Math.min(deferred, 40)][1]
-		annualIncome = withdrawPercent * withdrawBase
-	} else if (solveForVal == "initial") {
-		withdrawBase = annualIncome / withdrawPercent
-		initialPayment = withdrawBase / (bonusRate * Math.min(10, deferred) + 1)
+    if (solveForVal == "annual") {
+        populateBenefitTable()
+        withdrawBase = benefitTable[Math.min(deferred, 40)][1]
+        annualIncome = withdrawPercent * withdrawBase
+    } else if (solveForVal == "initial") {
+        withdrawBase = annualIncome / withdrawPercent
+        initialPayment = withdrawBase / (bonusRate * Math.min(10, deferred) + 1)
 
-		populateBenefitTable()
-	}
+        populateBenefitTable()
+    }
 }
 
 function displaySummary() {
-	let summaryTableHTML = createSummaryTableHTML()
-	let actualSummaryTableHTML = createActualSummaryTableHTML()
+    let summaryTableHTML = createSummaryTableHTML()
+    let actualSummaryTableHTML = createActualSummaryTableHTML()
 
-	document.getElementById("summaryTable").innerHTML = summaryTableHTML
-	document.getElementById("actualSummaryTable").innerHTML = actualSummaryTableHTML
-	document.getElementById("summaryContents").classList.remove("j-summary-and-footer-container-slide")
-	document.getElementById("footer").classList.remove("j-summary-and-footer-container-slide")
-	document.getElementById("summaryTableContainer").classList.remove("j-summary-show")
-	setTimeout(function () {
-		document.getElementById("summaryContents").classList.add("j-summary-and-footer-container-slide")
-		document.getElementById("footer").classList.add("j-summary-and-footer-container-slide")
-		document.getElementById("summaryTableContainer").classList.add("j-summary-show")
-	}, 3)
+    document.getElementById("summaryTable").innerHTML = summaryTableHTML
+    document.getElementById("actualSummaryTable").innerHTML = actualSummaryTableHTML
+    document.getElementById("summaryContents").classList.remove("j-summary-and-footer-container-slide")
+    document.getElementById("footer").classList.remove("j-summary-and-footer-container-slide")
+    document.getElementById("summaryTableContainer").classList.remove("j-summary-show")
+    setTimeout(function() {
+        document.getElementById("summaryContents").classList.add("j-summary-and-footer-container-slide")
+        document.getElementById("footer").classList.add("j-summary-and-footer-container-slide")
+        document.getElementById("summaryTableContainer").classList.add("j-summary-show")
+    }, 3)
 }
 
 function storeUserInput() {
-	stateVal = state.value
-	solveForVal = solveFor.value
-	if (solveForVal == "annual") {
-		initialPayment = getIncomeOrInitialInt()
-	} else if (solveForVal == "initial") {
-		annualIncome = getIncomeOrInitialInt()
-	}
-	glwbVal = parseInt(glwb.value)
-	livesCoveredVal = parseInt(livesCovered.value)
-	currentAgeVal = parseInt(currentAge.value)
-	if (livesCoveredVal == 1) {
-		//joint life selected. otherwise spouseAgeVal stays at 0
-		spouseAgeVal = parseInt(spouseAge.value)
-	}
-	deferred = parseInt(yearsDeferred.value)
+    stateVal = state.value
+    solveForVal = solveFor.value
+    if (solveForVal == "annual") {
+        initialPayment = getIncomeOrInitialInt()
+    } else if (solveForVal == "initial") {
+        annualIncome = getIncomeOrInitialInt()
+    }
+    glwbVal = parseInt(glwb.value)
+    livesCoveredVal = parseInt(livesCovered.value)
+    currentAgeVal = parseInt(currentAge.value)
+    if (livesCoveredVal == 1) {
+        //joint life selected. otherwise spouseAgeVal stays at 0
+        spouseAgeVal = parseInt(spouseAge.value)
+    }
+    deferred = parseInt(yearsDeferred.value)
 }
 
 function createActualSummaryTableHTML(forPDF = false) {
-	let pdfPadding = "8px"
-	let returnHTML = `<table style="${forPDF ? "font-size:11px;" : ""}border-collapse: collapse;">`
-	if (forPDF) {
-		returnHTML += `
+    let pdfPadding = "8px"
+    let returnHTML = `<table style="${forPDF ? "font-size:11px;" : ""}border-collapse: collapse;">`
+    if (forPDF) {
+        returnHTML += `
 		<colgroup>
 			<col span="5" style="width:110px;"></col>
  		</colgroup>
 		`
-	}
-	returnHTML += `
+    }
+    returnHTML += `
 	<tr>
 	  <th${forPDF ? ' style="border-right: 2px solid white; padding:10px; color:white; background:' + accentColor + '; border-radius:5px 0 0 0;"' : ""}>Years Deferred</th>
 	  <th${forPDF ? ' style="border-right: 2px solid white; padding:10px; color:white; background:' + accentColor + ';"' : ""}>Age at Income Start</th>
@@ -137,41 +140,41 @@ function createActualSummaryTableHTML(forPDF = false) {
 	</tr>
 	`
 
-	let counter = 0
-	let evenOddCounter = 0
-	let rowHighlighted = false
-	for (let row of benefitTable) {
-		if (!rowHighlighted) {
-			let wPercent = "-"
-			let bBase = Math.round(row[1])
-			let currentAgeDisplayed = getYoungestAge() + counter
+    let counter = 0
+    let evenOddCounter = 0
+    let rowHighlighted = false
+    for (let row of benefitTable) {
+        if (!rowHighlighted) {
+            let wPercent = "-"
+            let bBase = Math.round(row[1])
+            let currentAgeDisplayed = getYoungestAge() + counter
 
-			if (counter > 9 && deferred > 10) {
-				let groupYoungAge = getYoungestAge() + counter
-				let groupOldAge = groupYoungAge
-				let prevWPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
-				let yearLow = counter
-				wPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
-				do {
-					if (getYoungestAge() + counter < 100) {
-						counter++
-						groupOldAge++
-						prevWPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
-					} else {
-						break
-					}
-				} while (groupOldAge < 100 && prevWPercent == withdrawMap.get(getYoungestAge() + counter + 1)[glwbVal + livesCoveredVal])
-				if (ageAtIncome <= getYoungestAge() + counter) {
-					returnHTML += `<tr style='background:${blueColor};'>`
-					rowHighlighted = true
-				} else if (forPDF && evenOddCounter % 2 == 0) {
-					returnHTML += `<tr style='background:${greyColor};'>`
-				} else {
-					returnHTML += "<tr>"
-				}
-				let displayAsSingleYear = yearLow - (counter - (groupOldAge - ageAtIncome)) == 0
-				if (forPDF) {
-					returnHTML += `
+            if (counter > 9 && deferred > 10) {
+                let groupYoungAge = getYoungestAge() + counter
+                let groupOldAge = groupYoungAge
+                let prevWPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
+                let yearLow = counter
+                wPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
+                do {
+                    if (getYoungestAge() + counter < 100) {
+                        counter++
+                        groupOldAge++
+                        prevWPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
+                    } else {
+                        break
+                    }
+                } while (groupOldAge < 100 && prevWPercent == withdrawMap.get(getYoungestAge() + counter + 1)[glwbVal + livesCoveredVal])
+                if (ageAtIncome <= getYoungestAge() + counter) {
+                    returnHTML += `<tr style='background:${blueColor};'>`
+                    rowHighlighted = true
+                } else if (forPDF && evenOddCounter % 2 == 0) {
+                    returnHTML += `<tr style='background:${greyColor};'>`
+                } else {
+                    returnHTML += "<tr>"
+                }
+                let displayAsSingleYear = yearLow - (counter - (groupOldAge - ageAtIncome)) == 0
+                if (forPDF) {
+                    returnHTML += `
 						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayAsSingleYear ? yearLow : yearLow + " - " + (counter - (groupOldAge - ageAtIncome))}</td>
 						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayAsSingleYear ? groupYoungAge : groupYoungAge + " - " + Math.min(groupOldAge, ageAtIncome)}</td>
 						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayDollars(bBase)}</td>
@@ -179,8 +182,8 @@ function createActualSummaryTableHTML(forPDF = false) {
 						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding};">${displayPercent(wPercent)}</td>
 					</tr>
 					`
-				} else {
-					returnHTML += `
+                } else {
+                    returnHTML += `
 						<td${rowHighlighted ? ' style="color:white; style="border-right: 2px solid white;"' : ""}>${displayAsSingleYear ? yearLow : yearLow + " - " + (counter - (groupOldAge - ageAtIncome))}</td>
 						<td${rowHighlighted ? ' style="color:white; style="border-right: 2px solid white;"' : ""}>${displayAsSingleYear ? groupYoungAge : groupYoungAge + " - " + Math.min(groupOldAge, ageAtIncome)}</td>
 						<td${rowHighlighted ? ' style="color:white; style="border-right: 2px solid white;"' : ""}>${displayDollars(bBase)}</td>
@@ -188,21 +191,21 @@ function createActualSummaryTableHTML(forPDF = false) {
 						<td${rowHighlighted ? ' style="color:white;"' : ""}>${displayPercent(wPercent)}</td>
 					</tr>
 					`
-				}
-			} else {
-				if (currentAgeDisplayed > 54) {
-					wPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
-				}
-				if (ageAtIncome == getYoungestAge() + counter) {
-					returnHTML += `<tr style='background:${blueColor};'>`
-					rowHighlighted = true
-				} else if (forPDF && evenOddCounter % 2 == 0) {
-					returnHTML += `<tr style='background:${greyColor};'>`
-				} else {
-					returnHTML += "<tr>"
-				}
-				if (forPDF) {
-					returnHTML += `
+                }
+            } else {
+                if (currentAgeDisplayed > 54) {
+                    wPercent = withdrawMap.get(getYoungestAge() + counter)[glwbVal + livesCoveredVal]
+                }
+                if (ageAtIncome == getYoungestAge() + counter) {
+                    returnHTML += `<tr style='background:${blueColor};'>`
+                    rowHighlighted = true
+                } else if (forPDF && evenOddCounter % 2 == 0) {
+                    returnHTML += `<tr style='background:${greyColor};'>`
+                } else {
+                    returnHTML += "<tr>"
+                }
+                if (forPDF) {
+                    returnHTML += `
 						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${row[0]}</td>
 						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${currentAgeDisplayed}</td>
 						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayDollars(bBase)}</td>
@@ -210,8 +213,8 @@ function createActualSummaryTableHTML(forPDF = false) {
 						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding};">${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
 					</tr>
 					`
-				} else {
-					returnHTML += `
+                } else {
+                    returnHTML += `
 						<td${rowHighlighted ? ' style="color:white; border-right:2px solid white;"' : ""}>${row[0]}</td>
 						<td${rowHighlighted ? ' style="color:white; border-right:2px solid white;"' : ""}>${currentAgeDisplayed}</td>
 						<td${rowHighlighted ? ' style="color:white; border-right:2px solid white;"' : ""}>${displayDollars(bBase)}</td>
@@ -219,24 +222,24 @@ function createActualSummaryTableHTML(forPDF = false) {
 						<td${rowHighlighted ? ' style="color:white;"' : ""}>${wPercent == "-" ? "-" : displayPercent(wPercent)}</td>
 					</tr>
 					`
-				}
-			}
+                }
+            }
 
-			evenOddCounter++
-			if (getYoungestAge() + counter < 100) {
-				counter++
-			} else {
-				break
-			}
-		}
-	}
-	returnHTML += "</table>"
+            evenOddCounter++
+            if (getYoungestAge() + counter < 100) {
+                counter++
+            } else {
+                break
+            }
+        }
+    }
+    returnHTML += "</table>"
 
-	return returnHTML
+    return returnHTML
 }
 
 function createSummaryTableHTML() {
-	let returnHTML = `
+    let returnHTML = `
 	<div class="j-third-flex">
 		<div class="j-summary-table-element">
 			<p class="j-bold-font">GLWB/Lives Covered:  </p>
@@ -271,16 +274,16 @@ function createSummaryTableHTML() {
 			<p>${currentAgeVal}</p>
 		</div>
 	`
-	if (livesCoveredVal == 1) {
-		returnHTML += `
+    if (livesCoveredVal == 1) {
+        returnHTML += `
 		<div class="j-summary-table-element">
 			<p class="j-bold-font">Spouse's Current Age:  </p>
 			<p>${spouseAgeVal}</p>
 		</div>
 		`
-	}
+    }
 
-	returnHTML += `
+    returnHTML += `
 		<div class="j-summary-table-element">
 			<p class="j-bold-font">Age at Income Start:  </p>
 			<p>${ageAtIncome}</p>
@@ -288,305 +291,305 @@ function createSummaryTableHTML() {
 	</div>
 	`
 
-	return returnHTML
+    return returnHTML
 }
 
 function populateBenefitTable() {
-	let previousBenefit = initialPayment
-	benefitTable.push([0, initialPayment])
+    let previousBenefit = initialPayment
+    benefitTable.push([0, initialPayment])
 
-	for (let i = 1; i < 41; i++) {
-		if (i < 11) {
-			previousBenefit = initialPayment * bonusRate + previousBenefit
-		}
-		benefitTable.push([i, previousBenefit])
-	}
+    for (let i = 1; i < 41; i++) {
+        if (i < 11) {
+            previousBenefit = initialPayment * bonusRate + previousBenefit
+        }
+        benefitTable.push([i, previousBenefit])
+    }
 }
 
 function getYoungestAge() {
-	if (livesCoveredVal == 0) {
-		// livesCoveredStr = "Single Life"
-		return currentAgeVal
-	} else {
-		// livesCoveredStr = "Joint Life"
-		return Math.min(spouseAgeVal, currentAgeVal)
-	}
+    if (livesCoveredVal == 0) {
+        // livesCoveredStr = "Single Life"
+        return currentAgeVal
+    } else {
+        // livesCoveredStr = "Joint Life"
+        return Math.min(spouseAgeVal, currentAgeVal)
+    }
 }
 
 function createGlwbAndLivesCoveredString() {
-	let glwbStr = ""
-	let livesCoveredStr = ""
-	// glwb == 0 when income boost; 2 when income control
-	if (glwbVal == 0) {
-		glwbStr = "Income Boost"
-	} else {
-		glwbStr = "Income Control"
-	}
-	if (livesCoveredVal == 0) {
-		livesCoveredStr = "Single Life"
-	} else {
-		livesCoveredStr = "Joint Life"
-	}
-	return glwbStr + "/" + livesCoveredStr
+    let glwbStr = ""
+    let livesCoveredStr = ""
+        // glwb == 0 when income boost; 2 when income control
+    if (glwbVal == 0) {
+        glwbStr = "Income Boost"
+    } else {
+        glwbStr = "Income Control"
+    }
+    if (livesCoveredVal == 0) {
+        livesCoveredStr = "Single Life"
+    } else {
+        livesCoveredStr = "Joint Life"
+    }
+    return glwbStr + "/" + livesCoveredStr
 }
 
 function validateInput() {
-	// returnArray indices represent:
-	// 0 = income or initial payment
-	// 1 = current age
-	// 2 = spouse's age
-	// 3 = years deferred
-	// values of ["v", "v"] mean that those values are valid
-	let returnArray = [
-		["v", "v"],
-		["v", "v"],
-		["v", "v"],
-		["v", "v"],
-	]
-	returnArray[0] = testIncomeOrInitialPaymentValues()
-	returnArray[1] = testCurrentAgeValues()
-	returnArray[2] = testSpouseAgeValues()
-	returnArray[3] = testYearsDeferredValues()
+    // returnArray indices represent:
+    // 0 = income or initial payment
+    // 1 = current age
+    // 2 = spouse's age
+    // 3 = years deferred
+    // values of ["v", "v"] mean that those values are valid
+    let returnArray = [
+        ["v", "v"],
+        ["v", "v"],
+        ["v", "v"],
+        ["v", "v"],
+    ]
+    returnArray[0] = testIncomeOrInitialPaymentValues()
+    returnArray[1] = testCurrentAgeValues()
+    returnArray[2] = testSpouseAgeValues()
+    returnArray[3] = testYearsDeferredValues()
 
-	return returnArray
+    return returnArray
 }
 
 function testIncomeOrInitialPaymentValues() {
-	let returnArray = ["v", "v"]
+    let returnArray = ["v", "v"]
 
-	if (solveForVal == "annual") {
-		if (!incomeOrInitialPayment.value || getIncomeOrInitialInt() < 6000 || getIncomeOrInitialInt() > 3000000) {
-			returnArray = ["incomeOrInitialPayment", "'Initial Purchase Payment' must be between 6000 and 3,000,000."]
-		}
-	} else {
-		// solveFor == 'initial' in this case
-		if (!incomeOrInitialPayment.value || getIncomeOrInitialInt() < 200) {
-			returnArray = ["incomeOrInitialPayment", "'Annual Withdrawal Amount' must be at least 200."]
-		}
-	}
+    if (solveForVal == "annual") {
+        if (!incomeOrInitialPayment.value || getIncomeOrInitialInt() < 6000 || getIncomeOrInitialInt() > 3000000) {
+            returnArray = ["incomeOrInitialPayment", "'Initial Purchase Payment' must be between 6000 and 3,000,000."]
+        }
+    } else {
+        // solveFor == 'initial' in this case
+        if (!incomeOrInitialPayment.value || getIncomeOrInitialInt() < 200) {
+            returnArray = ["incomeOrInitialPayment", "'Annual Withdrawal Amount' must be at least 200."]
+        }
+    }
 
-	return returnArray
+    return returnArray
 }
 
 function testCurrentAgeValues() {
-	let returnArray = ["v", "v"]
+    let returnArray = ["v", "v"]
 
-	if (glwbVal == 0) {
-		// glwb == 0 when income boost; 2 when income control
-		if (!currentAge.value || currentAgeVal < 45 || currentAgeVal > 80) {
-			returnArray = ["currentAge", "'Current Age' must be between 45 and 80."]
-		}
-	} else {
-		// glwb == 2 == 'income control' in this case
-		if (!currentAge.value || currentAgeVal < 55 || currentAgeVal > 80) {
-			returnArray = ["currentAge", "'Current Age' must be between 55 and 80."]
-		}
-	}
+    if (glwbVal == 0) {
+        // glwb == 0 when income boost; 2 when income control
+        if (!currentAge.value || currentAgeVal < 45 || currentAgeVal > 80) {
+            returnArray = ["currentAge", "'Current Age' must be between 45 and 80."]
+        }
+    } else {
+        // glwb == 2 == 'income control' in this case
+        if (!currentAge.value || currentAgeVal < 55 || currentAgeVal > 80) {
+            returnArray = ["currentAge", "'Current Age' must be between 55 and 80."]
+        }
+    }
 
-	return returnArray
+    return returnArray
 }
 
 function testSpouseAgeValues() {
-	let returnArray = ["v", "v"]
+    let returnArray = ["v", "v"]
 
-	if (livesCoveredVal == 1) {
-		if (glwbVal == 0) {
-			// glwb == 0 when income boost; 2 when income control
-			if (!spouseAge.value || spouseAgeVal < 45 || spouseAgeVal > 80) {
-				returnArray = ["spouseAge", "'Spouse's Current Age' must be between 45 and 80."]
-			}
-		} else {
-			// glwb == 2 == 'income control' in this case
-			if (!spouseAge.value || spouseAgeVal < 55 || spouseAgeVal > 80) {
-				returnArray = ["spouseAge", "'Spouse's Current Age' must be between 55 and 80."]
-			}
-		}
-	}
+    if (livesCoveredVal == 1) {
+        if (glwbVal == 0) {
+            // glwb == 0 when income boost; 2 when income control
+            if (!spouseAge.value || spouseAgeVal < 45 || spouseAgeVal > 80) {
+                returnArray = ["spouseAge", "'Spouse's Current Age' must be between 45 and 80."]
+            }
+        } else {
+            // glwb == 2 == 'income control' in this case
+            if (!spouseAge.value || spouseAgeVal < 55 || spouseAgeVal > 80) {
+                returnArray = ["spouseAge", "'Spouse's Current Age' must be between 55 and 80."]
+            }
+        }
+    }
 
-	return returnArray
+    return returnArray
 }
 
 function testYearsDeferredValues() {
-	let returnArray = ["v", "v"]
+    let returnArray = ["v", "v"]
 
-	if (!yearsDeferred.value || deferred < 0 || deferred > 50) {
-		returnArray = ["yearsDeferred", "'Years Income is Deferred' must be between 0 and 50."]
-	} else {
-		// input range is valid
-		let incomeStartAge = deferred + getYoungestAge()
-		if (!incomeStartAge || incomeStartAge < 55 || incomeStartAge > 100) {
-			returnArray = ["yearsDeferred", "Attained age at income start must be between 55 and 100."]
-		}
-	}
+    if (!yearsDeferred.value || deferred < 0 || deferred > 50) {
+        returnArray = ["yearsDeferred", "'Years Income is Deferred' must be between 0 and 50."]
+    } else {
+        // input range is valid
+        let incomeStartAge = deferred + getYoungestAge()
+        if (!incomeStartAge || incomeStartAge < 55 || incomeStartAge > 100) {
+            returnArray = ["yearsDeferred", "Attained age at income start must be between 55 and 100."]
+        }
+    }
 
-	return returnArray
+    return returnArray
 }
 
 function clearErrorMessages() {
-	incomeOrInitialPaymentError.innerHTML = ""
-	currentAgeError.innerHTML = ""
-	spouseAgeError.innerHTML = ""
-	yearsDeferredError.innerHTML = ""
+    incomeOrInitialPaymentError.innerHTML = ""
+    currentAgeError.innerHTML = ""
+    spouseAgeError.innerHTML = ""
+    yearsDeferredError.innerHTML = ""
 }
 
 function clearValues() {
-	stateVal = ""
-	initialPayment = 0
-	annualIncome = 0
-	withdrawBase = 0
-	ageAtIncome = 0
-	withdrawPercent = 0
-	bonusRate = 0
-	deferred = 0
-	glwbVal = 0
-	livesCoveredVal = 0
-	currentAgeVal = 0
-	spouseAgeVal = 0
-	benefitTable = []
+    stateVal = ""
+    initialPayment = 0
+    annualIncome = 0
+    withdrawBase = 0
+    ageAtIncome = 0
+    withdrawPercent = 0
+    bonusRate = 0
+    deferred = 0
+    glwbVal = 0
+    livesCoveredVal = 0
+    currentAgeVal = 0
+    spouseAgeVal = 0
+    benefitTable = []
 }
 
 function handleSolveFor() {
-	if (solveFor.value == "annual") {
-		incomeOrInitialPaymentLbl.innerHTML = "Initial Purchase Payment: <sup>*</sup>"
-	} else {
-		incomeOrInitialPaymentLbl.innerHTML = "Annual Withdrawal Amount: <sup>*</sup>"
-	}
+    if (solveFor.value == "annual") {
+        incomeOrInitialPaymentLbl.innerHTML = "Initial Purchase Payment: <sup>*</sup>"
+    } else {
+        incomeOrInitialPaymentLbl.innerHTML = "Annual Withdrawal Amount: <sup>*</sup>"
+    }
 }
 
 function handleLivesCovered() {
-	if (parseInt(livesCovered.value) == 1) {
-		spouseAgeDiv.style.display = "flex"
-	} else {
-		spouseAgeDiv.style.display = "none"
-	}
+    if (parseInt(livesCovered.value) == 1) {
+        spouseAgeDiv.style.display = "flex"
+    } else {
+        spouseAgeDiv.style.display = "none"
+    }
 }
 
 function giveWarning(testResults) {
-	let badInputElement = null
-	let errorMessage = null
+    let badInputElement = null
+    let errorMessage = null
 
-	for (let input of testResults) {
-		if (input[0] != "v") {
-			badInputElement = input[0]
-			errorMessage = input[1]
-		}
-		if (badInputElement) {
-			let varString = badInputElement + "Error"
-			eval(varString + '.innerHTML = "' + errorMessage + '"')
-		}
-	}
+    for (let input of testResults) {
+        if (input[0] != "v") {
+            badInputElement = input[0]
+            errorMessage = input[1]
+        }
+        if (badInputElement) {
+            let varString = badInputElement + "Error"
+            eval(varString + '.innerHTML = "' + errorMessage + '"')
+        }
+    }
 }
 
 function populateMap() {
-	for (let i = 55; i < 60; i++) {
-		withdrawMap.set(i, [0.035, 0.0285, 0.0375, 0.031])
-	}
-	for (let i = 60; i < 65; i++) {
-		withdrawMap.set(i, [0.0375, 0.031, 0.0425, 0.036])
-	}
-	for (let i = 65; i < 75; i++) {
-		withdrawMap.set(i, [0.05, 0.0435, 0.055, 0.0485])
-	}
-	for (let i = 75; i < 80; i++) {
-		withdrawMap.set(i, [0.0525, 0.046, 0.0575, 0.051])
-	}
-	for (let i = 80; i < 85; i++) {
-		withdrawMap.set(i, [0.055, 0.0485, 0.06, 0.0535])
-	}
-	for (let i = 85; i < 101; i++) {
-		withdrawMap.set(i, [0.0575, 0.051, 0.0625, 0.056])
-	}
+    for (let i = 55; i < 60; i++) {
+        withdrawMap.set(i, [0.035, 0.0285, 0.0375, 0.031])
+    }
+    for (let i = 60; i < 65; i++) {
+        withdrawMap.set(i, [0.0375, 0.031, 0.0425, 0.036])
+    }
+    for (let i = 65; i < 75; i++) {
+        withdrawMap.set(i, [0.05, 0.0435, 0.055, 0.0485])
+    }
+    for (let i = 75; i < 80; i++) {
+        withdrawMap.set(i, [0.0525, 0.046, 0.0575, 0.051])
+    }
+    for (let i = 80; i < 85; i++) {
+        withdrawMap.set(i, [0.055, 0.0485, 0.06, 0.0535])
+    }
+    for (let i = 85; i < 101; i++) {
+        withdrawMap.set(i, [0.0575, 0.051, 0.0625, 0.056])
+    }
 }
 
 function displayDollars(x) {
-	x = Math.round(x * 100) / 100
-	return "$" + x.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    x = Math.round(x * 100) / 100
+    return "$" + x.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
 function displayPercent(x) {
-	return (Math.round(x * 100 * 100) / 100).toFixed(2) + "%"
+    return (Math.round(x * 100 * 100) / 100).toFixed(2) + "%"
 }
 
 function getIncomeOrInitialInt() {
-	let dollarStr = incomeOrInitialPayment.value
-	if (dollarStr == "$NaN") {
-		return 0
-	}
-	dollarStr = dollarStr.replace(/[^\d.-]/g, "")
-	return parseInt(dollarStr)
+    let dollarStr = incomeOrInitialPayment.value
+    if (dollarStr == "$NaN") {
+        return 0
+    }
+    dollarStr = dollarStr.replace(/[^\d.-]/g, "")
+    return parseInt(dollarStr)
 }
 
 function addEventListeners() {
-	if (nextBtn.addEventListener) {
-		nextBtn.addEventListener("click", handleNextBtn)
-	} else if (listener.attachEvent) {
-		nextBtn.attachEvent("onclick", handleNextBtn)
-	}
-	if (solveFor.addEventListener) {
-		solveFor.addEventListener("click", handleSolveFor)
-	} else if (listener.attachEvent) {
-		solveFor.attachEvent("onclick", handleSolveFor)
-	}
-	if (livesCovered.addEventListener) {
-		livesCovered.addEventListener("click", handleLivesCovered)
-	} else if (listener.attachEvent) {
-		livesCovered.attachEvent("onclick", handleLivesCovered)
-	}
-	if (clientReportBtn.addEventListener) {
-		clientReportBtn.addEventListener("click", handleClientReport)
-	} else if (listener.attachEvent) {
-		clientReportBtn.attachEvent("onclick", handleClientReport)
-	}
-	if (incomeOrInitialPayment.addEventListener) {
-		incomeOrInitialPayment.addEventListener("change", handleIncomeOrInitalChange)
-	} else if (listener.attachEvent) {
-		incomeOrInitialPayment.attachEvent("onchange", handleIncomeOrInitalChange)
-	}
+    if (nextBtn.addEventListener) {
+        nextBtn.addEventListener("click", handleNextBtn)
+    } else if (listener.attachEvent) {
+        nextBtn.attachEvent("onclick", handleNextBtn)
+    }
+    if (solveFor.addEventListener) {
+        solveFor.addEventListener("click", handleSolveFor)
+    } else if (listener.attachEvent) {
+        solveFor.attachEvent("onclick", handleSolveFor)
+    }
+    if (livesCovered.addEventListener) {
+        livesCovered.addEventListener("click", handleLivesCovered)
+    } else if (listener.attachEvent) {
+        livesCovered.attachEvent("onclick", handleLivesCovered)
+    }
+    if (clientReportBtn.addEventListener) {
+        clientReportBtn.addEventListener("click", handleClientReport)
+    } else if (listener.attachEvent) {
+        clientReportBtn.attachEvent("onclick", handleClientReport)
+    }
+    if (incomeOrInitialPayment.addEventListener) {
+        incomeOrInitialPayment.addEventListener("change", handleIncomeOrInitalChange)
+    } else if (listener.attachEvent) {
+        incomeOrInitialPayment.attachEvent("onchange", handleIncomeOrInitalChange)
+    }
 }
 
 function handleIncomeOrInitalChange() {
-	let userInput = incomeOrInitialPayment.value
-	userInput = userInput.replace(/[^\d.-]/g, "") //removes any character that isn't a number while preserving decimal points
-	incomeOrInitialPayment.value = displayDollars(userInput)
+    let userInput = incomeOrInitialPayment.value
+    userInput = userInput.replace(/[^\d.-]/g, "") //removes any character that isn't a number while preserving decimal points
+    incomeOrInitialPayment.value = displayDollars(userInput)
 }
 
 function handleClientReport() {
-	// FULL SIZE OF jsPDF using html2canvas IS 596px x 841px. DON'T ASK ME WHY
+    // FULL SIZE OF jsPDF using html2canvas IS 596px x 841px. DON'T ASK ME WHY
 
-	let pdfHTML = `
+    let pdfHTML = `
 	<div id="page1" style="margin:0; width:596px; height:841px; font-family: helvetica, arial, verdana, sans-serif;">
 	`
-	pdfHTML += formatPDFSummary("110px")
-	pdfHTML += generatePDFPageOne()
-	pdfHTML += `
+    pdfHTML += formatPDFSummary("110px")
+    pdfHTML += generatePDFPageOne()
+    pdfHTML += `
 	<div id="page2" style="margin:0; width:596px; height:841px; font-family: helvetica, arial, verdana, sans-serif;">
 	`
-	pdfHTML += formatPDFSummary("951px")
-	pdfHTML += generatePDFPageTwo()
-	pdfHTML += `
+    pdfHTML += formatPDFSummary("951px")
+    pdfHTML += generatePDFPageTwo()
+    pdfHTML += `
 	<div id="page3" style="margin:0; width:596px; height:841px; font-family: helvetica, arial, verdana, sans-serif;">
 	`
-	pdfHTML += generatePDFPageThree()
+    pdfHTML += generatePDFPageThree()
 
-	let today = new Date()
-	let dateStr = today.getMonth() + 1 + "." + today.getDate() + "." + today.getFullYear() + "_" + today.getHours() + "." + today.getMinutes()
-	let doc = new jsPDF({ hotfixes: ["px_scaling"], unit: "pt" })
-	doc.html(pdfHTML, {
-		html2canvas: {
-			scale: 1,
-		},
-		callback: function () {
-			doc.save(`APVA_Summary ${dateStr}.pdf`)
-		},
-		x: 0,
-		y: 0,
-	})
+    let today = new Date()
+    let dateStr = today.getMonth() + 1 + "." + today.getDate() + "." + today.getFullYear() + "_" + today.getHours() + "." + today.getMinutes()
+    let doc = new jsPDF({ hotfixes: ["px_scaling"], unit: "pt" })
+    doc.html(pdfHTML, {
+        html2canvas: {
+            scale: 1,
+        },
+        callback: function() {
+            doc.save(`APVA_Summary ${dateStr}.pdf`)
+        },
+        x: 0,
+        y: 0,
+    })
 }
 
 function generatePDFPageThree() {
-	let fontSize = "9px"
-	let marginBottom = "0px"
-	return `
+    let fontSize = "9px"
+    let marginBottom = "0px"
+    return `
 	<div id="page3content" style="margin:0; padding:20px; display:flex; flex-direction:column; position:absolute; top:1674px; width:556px; height:831px;">
 		<p id="page3title" style="font-size:14px; font-weight:700; margin-bottom:20px;">
 			Important disclosures
@@ -673,12 +676,12 @@ function generatePDFPageThree() {
 }
 
 function generatePDFPageTwo() {
-	let returnHTML = `
+    let returnHTML = `
 	<div id="page2content" style="margin:0; display:flex; flex-direction:column; position:absolute; top:1101px; width:596px; height:583px; justify-content:center; align-items:center;">
 		<div id="tableContainer" style="padding:20px 0 20px 0;">
 	`
-	returnHTML += createActualSummaryTableHTML(true)
-	returnHTML += `
+    returnHTML += createActualSummaryTableHTML(true)
+    returnHTML += `
 			</div>
 			<div id="finePrintContainer" style="gap:7px; padding:0 24px 0 24px; font-size:8px; display:flex; flex-direction:column; justify-content:center; margin:0 0 auto 0;">
 				<p style="margin:0;">
@@ -698,33 +701,34 @@ function generatePDFPageTwo() {
 		</div>
 	</div>
 	`
-	return returnHTML
+    return returnHTML
 }
 
 function generatePDFPageOne() {
-	let yearOrYears = deferred == 1 ? "year" : "years"
-	let percentOfInitial = annualIncome / initialPayment
-	let totalAnnualWithdrawals = annualIncome * (100 - ageAtIncome + 1)
-	let today = new Date()
-	let dateStr = today.getMonth() + 1 + "/" + today.getDate() + "/" + today.getFullYear()
-	let marginTop = "37px"
-	let titlePadding = "8px 10px 8px 10px"
-	let titleFontSize = "14px"
-	let detailsFontSize = "11px"
-	let returnStr = `
+    let yearOrYears = deferred == 1 ? "year" : "years"
+    let percentOfInitial = annualIncome / initialPayment
+    let totalAnnualWithdrawals = annualIncome * (100 - ageAtIncome + 1)
+    let today = new Date()
+    let dateStr = today.getMonth() + 1 + "/" + today.getDate() + "/" + today.getFullYear()
+    let marginTop = "34px"
+    let titlePadding = "8px 10px 8px 10px"
+    let titleFontSize = "14px"
+    let detailsFontSize = "11px"
+    let returnStr = `
 	<div id="page1content" style="margin:0; display:flex; flex-direction:column; position:absolute; top:250px; width:596px; height:591px; justify-content:center; align-items:center;">
-		<div id="annualContainer" style="border-radius:5px; width:526px; margin:0; margin-top:50px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="annualTitle" style="top:398px; left:30px; border-radius:6px; background:${accentColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
+		<div id="annualContainer" style="border-radius:5px; width:526px; margin:0; margin-top:40px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+			<div id="annualTitle" style="top:23px; left:30px; border-radius:6px; background:${blueColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Annual Withdrawal Amount: <span style="font-weight:200;">${displayDollars(annualIncome)}</span>
 			</div>
-			<div id="annualText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px;margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
+			<div id="annualText" style="background:${lightBlueColor}; font-size:${detailsFontSize}; width:556px;margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
 				You are guaranteed to receive this amount of annual income for life. On an annual basis, this equates to <strong>${displayPercent(percentOfInitial)}</strong> 
 				of an initial purchase payment of <strong>${displayDollars(initialPayment)}</strong>. If you live to age 100, your total annual 
 				withdrawals will amount to <strong>${displayDollars(totalAnnualWithdrawals)}</strong>.
 			</div>
 		</div>		
+		<div id="howItsDetermined" style="font-size:14px; color:black; margin-top:12px; border-bottom:1px solid black;">How it's determined</div>
 		<div id="initialContainer" style="width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="initialTitle" style="background:${accentColor}; position:absolute; top:33px; left:30px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
+			<div id="initialTitle" style="background:${accentColor}; position:absolute; top:155px; left:30px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Initial Purchase Payment: <span style="font-weight:200;">${displayDollars(initialPayment)}</span>
 			</div>
 			<div id="initialText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
@@ -732,7 +736,7 @@ function generatePDFPageOne() {
 			</div>
 		</div>
 		<div id="bonusContainer" style="border-radius:5px; width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="bonusTitle" style="border-radius:6px; color:white; background:${accentColor}; position:absolute; top:113px; left:30px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
+			<div id="bonusTitle" style="border-radius:6px; color:white; background:${accentColor}; position:absolute; top:233px; left:30px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Bonus Rate<sup style="font-size:9px;">2</sup>: <span style="font-weight:200;">${displayPercent(bonusRate)}</span>
 			</div>
 			<div id="bonusText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
@@ -741,7 +745,7 @@ function generatePDFPageOne() {
 			</div>
 		</div>
 		<div id="deferralContainer" style="width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="deferralTitle" style="background:${accentColor}; position:absolute; top:216px; left:30px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
+			<div id="deferralTitle" style="background:${accentColor}; position:absolute; top:336px; left:30px; color:white; border-radius:6px; font-size:${titleFontSize}; font-weight:700; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Income Deferral Period: <span style="font-weight:200;">${deferred} ${yearOrYears}</span>
 			</div>
 			<div id="deferralText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
@@ -751,7 +755,7 @@ function generatePDFPageOne() {
 			</div>
 		</div>
 		<div id="lifetimeContainer" style="border-radius:5px; width:526px; margin:0; margin-top:${marginTop}; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-			<div id="lifetimeTitle" style="top:307px; left:30px; border-radius:6px; background:${accentColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
+			<div id="lifetimeTitle" style="top:426px; left:30px; border-radius:6px; background:${accentColor}; color:white; font-size:${titleFontSize}; font-weight:700; position:absolute; padding:${titlePadding}; border-bottom: 1px solid white;">
 				Lifetime Withdrawal Percentage<sup style="font-size:9px;">2</sup>: <span style="font-weight:200;">${displayPercent(withdrawPercent)}</span>
 			</div>
 			<div id="lifetimeText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
@@ -766,11 +770,11 @@ function generatePDFPageOne() {
 			</p>
 			<p style="margin:0;"><sup>2</sup>The Bonus Rate and the Lifetime Withdrawal Percentage are valid for applications signed on ${dateStr}.</p>
 	`
-	if (livesCoveredVal == 1) {
-		returnStr += `<p style="margin:0;"><strong>Please Note:</strong> When Joint Life is elected, the covered age is based on the youngest spouse.</p>`
-	}
+    if (livesCoveredVal == 1) {
+        returnStr += `<p style="margin:0;"><strong>Please Note:</strong> When Joint Life is elected, the covered age is based on the youngest spouse.</p>`
+    }
 
-	returnStr += `
+    returnStr += `
 			</div>
 			<p style="font-size:8px; margin:10px; align-self:center; color:#444444;">
 				Page 1/3
@@ -779,17 +783,17 @@ function generatePDFPageOne() {
 	</div>
 	`
 
-	return returnStr
+    return returnStr
 }
 
 function formatPDFSummary(top) {
-	let fontSize = "9px"
-	let logoTop = (parseInt(top.slice(0, -2)) - 95).toString() + "px"
-	let logoNameTop = (parseInt(logoTop.slice(0, -2)) - 4).toString() + "px"
-	let yearOrYears = deferred == 1 ? "year" : "years"
-	let today = new Date()
-	let dateStr = today.getMonth() + 1 + "/" + today.getDate() + "/" + today.getFullYear()
-	let returnStr = `
+    let fontSize = "9px"
+    let logoTop = (parseInt(top.slice(0, -2)) - 95).toString() + "px"
+    let logoNameTop = (parseInt(logoTop.slice(0, -2)) - 4).toString() + "px"
+    let yearOrYears = deferred == 1 ? "year" : "years"
+    let today = new Date()
+    let dateStr = today.getMonth() + 1 + "/" + today.getDate() + "/" + today.getFullYear()
+    let returnStr = `
 	<div id="bigBanner" style="margin:0; position:absolute; display:flex; flex-direction:column; width:596px; height:110px; background:${accentColor}; color:white; font-size:14px; font-weight:700;">
 		<p style="margin:65px 0 0 15px; font-weight:200;">Delaware Life Accelerator Prime<sup style="font-size:8px;">SM</sup> Variable Annuity</p>
 		<p style="margin:0 0 0 15px;">Guaranteed Lifetime Withdrawal Benefit (GLWB) Income Summary</p>
@@ -859,25 +863,25 @@ function formatPDFSummary(top) {
 				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${currentAgeVal}</p>					
 			</div>
 	`
-	if (livesCoveredVal == 1) {
-		returnStr += `
+    if (livesCoveredVal == 1) {
+        returnStr += `
 			<div>
 				<p style="font-size:${fontSize}; font-weight:700; display:inline;">Spouse's Age: </p>
 				<p style="font-size:${fontSize}; font-weight:200; display:inline;">${spouseAgeVal}</p>					
 			</div>
 		`
-	} else {
-		returnStr += `
+    } else {
+        returnStr += `
 			<div>
 				<p style="font-size:${fontSize}; font-weight:700; display:inline; color:${greyColor};">A</p>
 			</div>
 		`
-	}
+    }
 
-	returnStr += `
+    returnStr += `
 		</div>
 	</div>
 	`
 
-	return returnStr
+    return returnStr
 }
