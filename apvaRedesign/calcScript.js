@@ -173,7 +173,7 @@ function createActualSummaryTableHTML(forPDF = false) {
 				let displayAsSingleYear = yearLow - (counter - (groupOldAge - ageAtIncome)) == 0
 				if (forPDF) {
 					returnHTML += `
-						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayAsSingleYear ? yearLow : yearLow + " - " + (counter - (groupOldAge - ageAtIncome))}</td>
+						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayAsSingleYear ? yearLow : yearLow + " - " + Math.min(counter, counter - (groupOldAge - ageAtIncome))}</td>
 						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayAsSingleYear ? groupYoungAge : groupYoungAge + " - " + Math.min(groupOldAge, ageAtIncome)}</td>
 						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayDollars(bBase)}</td>
 						<td style="${rowHighlighted ? "color:white; " : ""}text-align:center; padding:${pdfPadding}; border-right: 2px solid white;">${displayDollars(bBase * wPercent)}</td>
@@ -182,7 +182,7 @@ function createActualSummaryTableHTML(forPDF = false) {
 					`
 				} else {
 					returnHTML += `
-						<td${rowHighlighted ? ' style="color:white; style="border-right: 2px solid white;"' : ""}>${displayAsSingleYear ? yearLow : yearLow + " - " + (counter - (groupOldAge - ageAtIncome))}</td>
+						<td${rowHighlighted ? ' style="color:white; style="border-right: 2px solid white;"' : ""}>${displayAsSingleYear ? yearLow : yearLow + " - " + Math.min(counter, counter - (groupOldAge - ageAtIncome))}</td>
 						<td${rowHighlighted ? ' style="color:white; style="border-right: 2px solid white;"' : ""}>${displayAsSingleYear ? groupYoungAge : groupYoungAge + " - " + Math.min(groupOldAge, ageAtIncome)}</td>
 						<td${rowHighlighted ? ' style="color:white; style="border-right: 2px solid white;"' : ""}>${displayDollars(bBase)}</td>
 						<td${rowHighlighted ? ' style="color:white; style="border-right: 2px solid white;"' : ""}>${displayDollars(bBase * wPercent)}</td>
