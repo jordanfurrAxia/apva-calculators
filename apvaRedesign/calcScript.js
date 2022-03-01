@@ -44,6 +44,23 @@ let initialPayment,
 	deferred = 0
 let benefitTable = []
 
+function debugLogValues() {
+	console.log("stateVal: ", stateVal)
+	console.log("initialPayment: ", initialPayment)
+	console.log("annualIncome: ", annualIncome)
+	console.log("withdrawBase: ", withdrawBase)
+	console.log("ageAtIncome: ", ageAtIncome)
+	console.log("withdrawPercent: ", withdrawPercent)
+	console.log("bonusRate: ", bonusRate)
+	console.log("glwbVal: ", glwbVal)
+	console.log("livesCoveredVal: ", livesCoveredVal)
+	console.log("currentAgeVal: ", currentAgeVal)
+	console.log("spouseAgeVal: ", spouseAgeVal)
+	console.log("solveForVal: ", solveForVal)
+	console.log("deferred: ", deferred)
+	console.log("benefitTable: ", benefitTable)
+}
+
 function handleNextBtn() {
 	clearValues()
 	storeUserInput()
@@ -82,6 +99,8 @@ function runCalculation() {
 
 		populateBenefitTable()
 	}
+
+	// debugLogValues()
 }
 
 function displaySummary() {
@@ -485,7 +504,10 @@ function populateMap() {
 	for (let i = 60; i < 65; i++) {
 		withdrawMap.set(i, [0.0375, 0.031, 0.0425, 0.036])
 	}
-	for (let i = 65; i < 75; i++) {
+	for (let i = 65; i < 70; i++) {
+		withdrawMap.set(i, [0.05, 0.0435, 0.0525, 0.046])
+	}
+	for (let i = 70; i < 75; i++) {
 		withdrawMap.set(i, [0.05, 0.0435, 0.055, 0.0485])
 	}
 	for (let i = 75; i < 80; i++) {
