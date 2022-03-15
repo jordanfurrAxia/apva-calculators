@@ -541,24 +541,24 @@ function getIncomeOrInitialInt() {
 
 function addEventListeners() {
 	if (nextBtn.addEventListener) {
-		nextBtn.addEventListener("click", handleNextBtn)
+		nextBtn.addEventListener("change", handleNextBtn)
 	} else if (listener.attachEvent) {
-		nextBtn.attachEvent("onclick", handleNextBtn)
+		nextBtn.attachEvent("onchange", handleNextBtn)
 	}
 	if (solveFor.addEventListener) {
-		solveFor.addEventListener("click", handleSolveFor)
+		solveFor.addEventListener("change", handleSolveFor)
 	} else if (listener.attachEvent) {
-		solveFor.attachEvent("onclick", handleSolveFor)
+		solveFor.attachEvent("onchange", handleSolveFor)
 	}
 	if (livesCovered.addEventListener) {
-		livesCovered.addEventListener("click", handleLivesCovered)
+		livesCovered.addEventListener("change", handleLivesCovered)
 	} else if (listener.attachEvent) {
-		livesCovered.attachEvent("onclick", handleLivesCovered)
+		livesCovered.attachEvent("onchange", handleLivesCovered)
 	}
 	if (clientReportBtn.addEventListener) {
-		clientReportBtn.addEventListener("click", handleClientReport)
+		clientReportBtn.addEventListener("change", handleClientReport)
 	} else if (listener.attachEvent) {
-		clientReportBtn.attachEvent("onclick", handleClientReport)
+		clientReportBtn.attachEvent("onchange", handleClientReport)
 	}
 	if (incomeOrInitialPayment.addEventListener) {
 		incomeOrInitialPayment.addEventListener("change", handleIncomeOrInitalChange)
