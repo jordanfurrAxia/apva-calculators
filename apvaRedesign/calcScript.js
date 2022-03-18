@@ -541,9 +541,9 @@ function getIncomeOrInitialInt() {
 
 function addEventListeners() {
 	if (nextBtn.addEventListener) {
-		nextBtn.addEventListener("change", handleNextBtn)
+		nextBtn.addEventListener("click", handleNextBtn)
 	} else if (listener.attachEvent) {
-		nextBtn.attachEvent("onchange", handleNextBtn)
+		nextBtn.attachEvent("onclick", handleNextBtn)
 	}
 	if (solveFor.addEventListener) {
 		solveFor.addEventListener("change", handleSolveFor)
