@@ -151,8 +151,26 @@ body {
 	color: white;
 	transition: ease 0.2s;
 }
+.j-va-ill-btn {
+	margin: 1rem 1rem 0 1rem;
+	font-weight: 700;
+	padding: 8px;
+	width: 170px;
+	text-align: center;
+	border-radius: 8px;
+	background: var(--apva-accent-color);
+	color: white;
+	transition: ease 0.2s;
+}
 
 .j-client-report-btn:hover {
+	cursor: pointer;
+	width: 180px;
+	background: var(--apva-accent-color-light);
+	transition: ease 0.3s;
+}
+
+.j-va-ill-btn:hover {
 	cursor: pointer;
 	width: 180px;
 	background: var(--apva-accent-color-light);

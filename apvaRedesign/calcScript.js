@@ -3,6 +3,7 @@ populateMap()
 
 let testBtn = document.getElementById("testBtn")
 let clientReportBtn = document.getElementById("clientReportBtn")
+let vaIllustrationBtn = document.getElementById("vaIllustrationBtn")
 let nextBtn = document.getElementById("nextBtn")
 let solveFor = document.getElementById("solveFor")
 let state = document.getElementById("state")
@@ -545,6 +546,16 @@ function addEventListeners() {
 	} else if (listener.attachEvent) {
 		nextBtn.attachEvent("onclick", handleNextBtn)
 	}
+	if (clientReportBtn.addEventListener) {
+		clientReportBtn.addEventListener("click", handleClientReport)
+	} else if (listener.attachEvent) {
+		clientReportBtn.attachEvent("onclick", handleClientReport)
+	}
+	if (vaIllustrationBtn.addEventListener) {
+		vaIllustrationBtn.addEventListener("click", handleVaIllustration)
+	} else if (listener.attachEvent) {
+		vaIllustrationBtn.attachEvent("onclick", handleVaIllustration)
+	}
 	if (solveFor.addEventListener) {
 		solveFor.addEventListener("change", handleSolveFor)
 	} else if (listener.attachEvent) {
@@ -554,11 +565,6 @@ function addEventListeners() {
 		livesCovered.addEventListener("change", handleLivesCovered)
 	} else if (listener.attachEvent) {
 		livesCovered.attachEvent("onchange", handleLivesCovered)
-	}
-	if (clientReportBtn.addEventListener) {
-		clientReportBtn.addEventListener("change", handleClientReport)
-	} else if (listener.attachEvent) {
-		clientReportBtn.attachEvent("onchange", handleClientReport)
 	}
 	if (incomeOrInitialPayment.addEventListener) {
 		incomeOrInitialPayment.addEventListener("change", handleIncomeOrInitalChange)
@@ -571,6 +577,10 @@ function handleIncomeOrInitalChange() {
 	let userInput = incomeOrInitialPayment.value
 	userInput = userInput.replace(/[^\d.-]/g, "") //removes any character that isn't a number while preserving decimal points
 	incomeOrInitialPayment.value = displayDollars(userInput)
+}
+
+function handleVaIllustration() {
+	window.open("https://imagisoft.com/DL/VA/", "_blank")
 }
 
 function handleClientReport() {
