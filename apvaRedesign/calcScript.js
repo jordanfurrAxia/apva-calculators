@@ -772,7 +772,7 @@ function generatePDFPageOne() {
 				Bonus Rate<sup style="font-size:9px;">2</sup>: <span style="font-weight:200;">${displayPercent(bonusRate)}</span>
 			</div>
 			<div id="bonusText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
-				This is the rate we use to calculate a bonus amount during the bonus period. This amount is added to the Withdrawal Benefit Base each year income is deferred. 
+				This is the rate we use to calculate a bonus amount during the bonus period. Your Withdrawal Benefit Base can increase by the bonus amount each year income is deferred. 
 				If you elect to begin lifetime income immediately, your Withdrawal Benefit Base will not be increased by a bonus amount.
 			</div>
 		</div>
@@ -797,8 +797,8 @@ function generatePDFPageOne() {
 		</div>
 		<div id="finePrintContainer" style="gap:7px; padding:0 20px 0 20px; font-size:8px; display:flex; flex-direction:column; justify-content:center; margin-top:auto; margin-bottom:0px;">
 			<p style="margin:0;">
-				<sup>1</sup>Early or excess withdrawals will reduce the Withdrawal Benefit Base and Bonus Base by the same proportion that the Account Value is reduced. 
-				This summary assumes that no withdrawals have been taken prior to the Income Start Date.
+				<sup>1</sup>Early or excess withdrawals will reduce the Withdrawal Benefit Base and Bonus Base, which may reduce the amount of future income. 
+				Please refer to the prospectus for more details.
 			</p>
 			<p style="margin:0;"><sup>2</sup>The Bonus Rate and the Lifetime Withdrawal Percentage are valid for applications signed on ${dateStr}.</p>
 	`
