@@ -3,6 +3,7 @@ populateMap()
 
 let testBtn = document.getElementById("testBtn")
 let clientReportBtn = document.getElementById("clientReportBtn")
+let vaIllustrationBtn = document.getElementById("vaIllustrationBtn")
 let nextBtn = document.getElementById("nextBtn")
 let solveFor = document.getElementById("solveFor")
 let state = document.getElementById("state")
@@ -87,7 +88,7 @@ function handleNextBtn() {
 function runCalculation() {
 	ageAtIncome = getYoungestAge() + deferred
 	withdrawPercent = withdrawMap.get(ageAtIncome)[glwbVal + livesCoveredVal]
-	bonusRate = glwbVal == 0 ? 0.06 : 0.07
+	bonusRate = glwbVal == 0 ? 0.0625 : 0.0725
 
 	if (solveForVal == "annual") {
 		populateBenefitTable()
@@ -545,6 +546,16 @@ function addEventListeners() {
 	} else if (listener.attachEvent) {
 		nextBtn.attachEvent("onclick", handleNextBtn)
 	}
+	if (clientReportBtn.addEventListener) {
+		clientReportBtn.addEventListener("click", handleClientReport)
+	} else if (listener.attachEvent) {
+		clientReportBtn.attachEvent("onclick", handleClientReport)
+	}
+	if (vaIllustrationBtn.addEventListener) {
+		vaIllustrationBtn.addEventListener("click", handleVaIllustration)
+	} else if (listener.attachEvent) {
+		vaIllustrationBtn.attachEvent("onclick", handleVaIllustration)
+	}
 	if (solveFor.addEventListener) {
 		solveFor.addEventListener("change", handleSolveFor)
 	} else if (listener.attachEvent) {
@@ -554,11 +565,6 @@ function addEventListeners() {
 		livesCovered.addEventListener("change", handleLivesCovered)
 	} else if (listener.attachEvent) {
 		livesCovered.attachEvent("onchange", handleLivesCovered)
-	}
-	if (clientReportBtn.addEventListener) {
-		clientReportBtn.addEventListener("change", handleClientReport)
-	} else if (listener.attachEvent) {
-		clientReportBtn.attachEvent("onchange", handleClientReport)
 	}
 	if (incomeOrInitialPayment.addEventListener) {
 		incomeOrInitialPayment.addEventListener("change", handleIncomeOrInitalChange)
@@ -571,6 +577,10 @@ function handleIncomeOrInitalChange() {
 	let userInput = incomeOrInitialPayment.value
 	userInput = userInput.replace(/[^\d.-]/g, "") //removes any character that isn't a number while preserving decimal points
 	incomeOrInitialPayment.value = displayDollars(userInput)
+}
+
+function handleVaIllustration() {
+	window.open("https://imagisoft.com/DL/VA/", "_blank")
 }
 
 function handleClientReport() {
@@ -653,7 +663,7 @@ function generatePDFPageThree() {
 			insurance company, and do not protect the value of underlying investment fund options within a variable annuity, which are subject to risk.
 		</p>
 		<p style="margin-bottom:${marginBottom}; font-size:${fontSize}; font-weight:300;">
-			The Income Boost GLWB fee (1.50%) and Income Control GLWB fee (1.35%) are calculated based 
+			The Income Boost GLWB fee (1.35%) and Income Control GLWB fee (1.35%) are calculated based 
 			on the withdrawal benefit base, charged at the end of each quarter, and deducted proportionately from the contract value. The rider fee percentage could be 
 			increased as a result of a step-up. Delaware Life will notify you in advance, 
 			and you can elect not to receive the step-up. The GLWB fee will never be greater than the set maximum GLWB fee.
@@ -762,7 +772,7 @@ function generatePDFPageOne() {
 				Bonus Rate<sup style="font-size:9px;">2</sup>: <span style="font-weight:200;">${displayPercent(bonusRate)}</span>
 			</div>
 			<div id="bonusText" style="background:${greyColor}; font-size:${detailsFontSize}; width:556px; margin:0 10px 0 10px; font-weight:300; padding:20px 10px 10px 10px;">
-				This is the rate we use to calculate a bonus amount during the bonus period. This amount is added to the Withdrawal Benefit Base each year income is deferred. 
+				This is the rate we use to calculate a bonus amount during the bonus period. Your Withdrawal Benefit Base can increase by the bonus amount each year income is deferred. 
 				If you elect to begin lifetime income immediately, your Withdrawal Benefit Base will not be increased by a bonus amount.
 			</div>
 		</div>
@@ -787,8 +797,8 @@ function generatePDFPageOne() {
 		</div>
 		<div id="finePrintContainer" style="gap:7px; padding:0 20px 0 20px; font-size:8px; display:flex; flex-direction:column; justify-content:center; margin-top:auto; margin-bottom:0px;">
 			<p style="margin:0;">
-				<sup>1</sup>Early or excess withdrawals will reduce the Withdrawal Benefit Base and Bonus Base by the same proportion that the Account Value is reduced. 
-				This summary assumes that no withdrawals have been taken prior to the Income Start Date.
+				<sup>1</sup>Early or excess withdrawals will reduce the Withdrawal Benefit Base and Bonus Base, which may reduce the amount of future income. 
+				Please refer to the prospectus for more details.
 			</p>
 			<p style="margin:0;"><sup>2</sup>The Bonus Rate and the Lifetime Withdrawal Percentage are valid for applications signed on ${dateStr}.</p>
 	`
