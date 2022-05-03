@@ -609,6 +609,7 @@ function handleClientReport() {
 			scale: 1,
 		},
 		callback: function () {
+			doc.output("dataurlnewwindow")
 			doc.save(`APVA_Summary ${dateStr}.pdf`)
 		},
 		x: 0,
