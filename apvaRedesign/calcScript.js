@@ -609,8 +609,9 @@ function handleClientReport() {
 			scale: 1,
 		},
 		callback: function () {
-			doc.output("dataurlnewwindow")
-			doc.save(`APVA_Summary ${dateStr}.pdf`)
+			// doc.output("dataurlnewwindow")
+			window.open(doc.output("bloburl", { filename: `APVA_Summary ${dateStr}.pdf` }))
+			// doc.save(`APVA_Summary ${dateStr}.pdf`)
 		},
 		x: 0,
 		y: 0,
